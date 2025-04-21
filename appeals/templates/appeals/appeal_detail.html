@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Обращение #{{ appeal.id }} — ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<div class="auth-form">
+  {% if messages %}
+  <div class="alert alert-success">
+    <span class="alert-icon">✅</span>
+    <div class="alert-content">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+    <a href="{% url 'appeals:my_appeals' %}" class="btn btn-outline">
+      ← Вернуться к списку
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="appeal-header">
+    <h2>Обращение #{{ appeal.id }}</h2>
+    <span class="status-badge {{ appeal.status }}">{{ appeal.get_status_display }}</span>
+  </div>
+
+  <div class="appeal-details">
+    <div class="detail-item">
+      <label>Основная информация</label>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">📅 Дата создания:</span>
+          <span class="info-value">{{ appeal.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">🚩 Приоритет:</span>
+          <span class="info-value">{{ appeal.get_priority_display }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-item">
+      <label>📌 Заголовок</label>
+      <p class="appeal-title">{{ appeal.title }}</p>
+    </div>
+
+    <div class="detail-item">
+      <label>📋 Описание</label>
+      <div class="appeal-description">
+        {{ appeal.description|linebreaks }}
+      </div>
+    </div>
+
+    {% if documents %}
+    <div class="detail-item">
+      <label>📎 Прикрепленные документы</label>
+      <div class="document-list">
+        {% for document in documents %}
+          <div class="document-item">
+            <a href="{{ document.file.url }}" target="_blank" class="document-link">
+              {{ document.file.name|slice:"15:"|truncatechars:30 }}
+            </a>
+            <span class="document-size">{{ document.file.size|filesizeformat }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="form-actions">
+    {% if appeal.author == request.user and appeal.status != 'completed' %}
+      <a href="{% url 'appeals:edit_appeal' appeal.id %}" class="btn btn-primary">
+        ✏️ Редактировать
+      </a>
+      <form method="post" action="{% url 'appeals:delete_appeal' appeal.id %}" class="delete-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger"
+                onclick="return confirm('Вы уверены что хотите удалить обращение?')">
+          🗑️ Удалить
+        </button>
+      </form>
+    {% endif %}
+    <a href="{% url 'appeals:my_appeals' %}" class="btn btn-outline">
+      ← Назад к списку
+    </a>
+  </div>
+</div>
+{% endblock %}

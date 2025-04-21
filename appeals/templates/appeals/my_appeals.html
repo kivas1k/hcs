@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Мои обращения — ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<div class="auth-form">
+  {% if messages %}
+  <div class="alert alert-success">
+    <span class="alert-icon">✅</span>
+    <div class="alert-content">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <h2>Мои обращения</h2>
+  
+  {% if appeals %}
+    <div class="appeals-grid">
+      {% for appeal in appeals %}
+        <a href="{% url 'appeals:appeal_detail' appeal.id %}" class="appeal-cube">
+          <div class="cube-header">
+            <h3 class="cube-title">{{ appeal.title|truncatechars:40 }}</h3>
+            <span class="cube-status {{ appeal.status }}">{{ appeal.get_status_display }}</span>
+          </div>
+
+          <div class="cube-meta">
+            <div class="cube-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              Приоритет: {{ appeal.get_priority_display }}
+            </div>
+          </div>
+
+          <div class="cube-date">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8m-1-13h2v6h-2V7m0 8h2v2h-2v-2"/>
+            </svg>
+            {{ appeal.created_at|date:"d.m.Y H:i" }}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+<div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <h3>Обращений пока нет</h3>
+    <p>Начните с создания нового обращения</p>
+    <a href="{% url 'appeals:create_appeal' %}" class="btn btn-primary">
+    Создать обращение
+  </a>
+</div>
+{% endif %}
+</div>
+{% endblock %}

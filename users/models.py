@@ -14,7 +14,6 @@ class User(AbstractUser):
         unique=True
     )
 
-    # Удаляем стандартные поля, если они не нужны
     first_name = models.CharField('Имя', max_length=150, blank=True, null=True)
     last_name = models.CharField('Фамилия', max_length=150, blank=True, null=True)
     email = models.EmailField('Email', unique=True, blank=True, null=True)

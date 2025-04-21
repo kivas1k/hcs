@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование обращения #{{ appeal.id }} — ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<div class="auth-form create-appeal">
+  {% if messages %}
+  <div class="alert alert-success">
+    <span class="alert-icon">✅</span>
+    <div class="alert-content">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+    <a href="{% url 'appeals:my_appeals' %}" class="btn btn-outline">
+      ← Вернуться к списку
+    </a>
+  </div>
+  {% endif %}
+
+  <h2>✏️ Редактирование обращения #{{ appeal.id }}</h2>
+  <form method="post" enctype="multipart/form-data" class="appeal-form">
+    {% csrf_token %}
+
+    <div class="form-group card-style">
+      <label for="{{ appeal_form.title.id_for_label }}">📌 Заголовок</label>
+      {{ appeal_form.title }}
+      {{ appeal_form.title.errors }}
+    </div>
+
+    <div class="form-group card-style">
+      <label for="{{ appeal_form.description.id_for_label }}">📝 Описание</label>
+      {{ appeal_form.description }}
+      {{ appeal_form.description.errors }}
+    </div>
+
+    {% if documents %}
+    <div class="form-group card-style">
+      <label>📎 Прикрепленные документы</label>
+      <div class="document-list">
+        {% for document in documents %}
+          <div class="document-item">
+            <a href="{{ document.file.url }}" target="_blank" class="document-link">
+              {{ document.file.name|slice:"15:"|truncatechars:30 }}
+            </a>
+            <a href="{% url 'appeals:delete_document' document.id %}"
+               class="document-delete"
+               onclick="return confirm('Удалить этот документ?')">✖</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="form-group card-style file-upload">
+      <label>📎 Добавить новые документы</label>
+      <div class="upload-area">
+        <svg width="40" height="40" viewBox="0 0 24 24" class="upload-icon">
+          <path fill="var(--primary)" d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+          <path fill="var(--primary)" d="M16 13h-3V10h-2v3H8l4 4 4-4z"/>
+        </svg>
+        <span class="upload-text">Перетащите файлы сюда или нажмите для выбора</span>
+        <input type="file" name="files" multiple class="file-input">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary submit-btn">
+        💾 Сохранить изменения
+      </button>
+      <a href="{% url 'appeals:appeal_detail' appeal.id %}" class="btn btn-outline">
+        Отмена
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}
