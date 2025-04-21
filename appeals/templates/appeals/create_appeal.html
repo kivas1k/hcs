@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Создание обращения — ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<div class="auth-form">
+  <h2>Создание обращения</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if appeal_form.non_field_errors %}
+    <div class="errorlist">
+      {% for error in appeal_form.non_field_errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+      {{ appeal_form.title.label_tag }}
+      {{ appeal_form.title }}
+      {{ appeal_form.title.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ appeal_form.description.label_tag }}
+      {{ appeal_form.description }}
+      {{ appeal_form.description.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ document_form.files.label_tag }}
+      <input type="file" name="files" class="form-control" multiple>
+      {{ document_form.files.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Отправить обращение</button>
+  </form>
+</div>
+{% endblock %}
