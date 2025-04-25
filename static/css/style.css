@@ -828,3 +828,20 @@ body {
   transform: scale(1.1);
   color: #c5304c;
 }
+
+.form-group label {
+  color: var(--dark);
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.form-group input:required,
+.form-group textarea:required {
+  box-shadow: none;
+}
+
+.required {
+  color: var(--danger);
+  margin-left: 0.3rem;
+}

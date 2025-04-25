@@ -8,30 +8,30 @@
   <form method="post" enctype="multipart/form-data" class="appeal-form">
     {% csrf_token %}
 
-    {% if appeal_form.non_field_errors %}
+    {% if form.non_field_errors %}
     <div class="errorlist">
-      {% for error in appeal_form.non_field_errors %}
+      {% for error in form.non_field_errors %}
         {{ error }}
       {% endfor %}
     </div>
     {% endif %}
 
     <div class="form-group card-style">
-      <label for="{{ appeal_form.title.id_for_label }}">
+      <label for="{{ form.title.id_for_label }}">
         📌 Заголовок обращения
         <span class="required">*</span>
       </label>
-      {{ appeal_form.title }}
-      {{ appeal_form.title.errors }}
+      {{ form.title }}
+      {{ form.title.errors }}
     </div>
 
     <div class="form-group card-style">
-      <label for="{{ appeal_form.description.id_for_label }}">
+      <label for="{{ form.description.id_for_label }}">
         📝 Подробное описание
         <span class="required">*</span>
       </label>
-      {{ appeal_form.description }}
-      {{ appeal_form.description.errors }}
+      {{ form.description }}
+      {{ form.description.errors }}
     </div>
 
     <div class="form-group card-style file-upload">

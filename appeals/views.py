@@ -7,11 +7,11 @@ from .forms import AppealForm, DocumentForm
 @login_required
 def create_appeal(request):
     if request.method == 'POST':
-        appeal_form = AppealForm(request.POST)
+        form = AppealForm(request.POST)  # Переименовано в form
         document_form = DocumentForm(request.POST, request.FILES)
 
-        if appeal_form.is_valid():
-            appeal = appeal_form.save(commit=False)
+        if form.is_valid():  # Используем form вместо appeal_form
+            appeal = form.save(commit=False)
             appeal.author = request.user
             appeal.save()
 
@@ -22,11 +22,11 @@ def create_appeal(request):
             return redirect('home')
 
     else:
-        appeal_form = AppealForm()
+        form = AppealForm()  # Переименовано в form
         document_form = DocumentForm()
 
     return render(request, 'appeals/create_appeal.html', {
-        'appeal_form': appeal_form,
+        'form': form,  # Ключ изменен на 'form'
         'document_form': document_form
     })
 
