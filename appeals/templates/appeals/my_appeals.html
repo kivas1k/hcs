@@ -6,7 +6,7 @@
 <div class="auth-form">
   {% if messages %}
   <div class="alert alert-success">
-    <span class="alert-icon">✅</span>
+    <span class="alert-icon"></span>
     <div class="alert-content">
       {% for message in messages %}
         {{ message }}
@@ -46,7 +46,7 @@
     </div>
   {% else %}
 <div class="empty-state">
-    <div class="empty-icon">📭</div>
+    <div class="empty-icon"></div>
     <h3>Обращений пока нет</h3>
     <p>Начните с создания нового обращения</p>
     <a href="{% url 'appeals:create_appeal' %}" class="btn btn-primary">

@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="auth-form create-appeal">
-  <h2>📄 Создание обращения</h2>
+  <h2>Создание обращения</h2>
   <form method="post" enctype="multipart/form-data" class="appeal-form">
     {% csrf_token %}
 
@@ -18,7 +18,7 @@
 
     <div class="form-group card-style">
       <label for="{{ form.title.id_for_label }}">
-        📌 Заголовок обращения
+        Заголовок обращения
         <span class="required">*</span>
       </label>
       {{ form.title }}
@@ -27,7 +27,7 @@
 
     <div class="form-group card-style">
       <label for="{{ form.description.id_for_label }}">
-        📝 Подробное описание
+        Подробное описание
         <span class="required">*</span>
       </label>
       {{ form.description }}
@@ -50,7 +50,7 @@
     </div>
 
     <button type="submit" class="btn btn-primary submit-btn">
-      📤 Отправить обращение
+      Отправить обращение
       <svg width="20" height="20" viewBox="0 0 24 24" class="submit-icon">
         <path fill="currentColor" d="M2 21v-2h20v2H2zm3.9-4.8-1.4-1.4L12 6l7.5 7.8-1.4 1.4L12 9 5.9 16.2z"/>
       </svg>

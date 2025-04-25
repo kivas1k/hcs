@@ -18,7 +18,7 @@
   </div>
   {% endif %}
 
-  <h2>✏️ Редактирование обращения #{{ appeal.id }}</h2>
+  <h2>Редактирование обращения #{{ appeal.id }}</h2>
   <form method="post" enctype="multipart/form-data" class="appeal-form">
     {% csrf_token %}
 
@@ -66,7 +66,7 @@
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary submit-btn">
-        💾 Сохранить изменения
+        Сохранить изменения
       </button>
       <a href="{% url 'appeals:appeal_detail' appeal.id %}" class="btn btn-outline">
         Отмена

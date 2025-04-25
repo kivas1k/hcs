@@ -28,23 +28,23 @@
       <label>Основная информация</label>
       <div class="info-grid">
         <div class="info-item">
-          <span class="info-label">📅 Дата создания:</span>
+          <span class="info-label">Дата создания:</span>
           <span class="info-value">{{ appeal.created_at|date:"d.m.Y H:i" }}</span>
         </div>
         <div class="info-item">
-          <span class="info-label">🚩 Приоритет:</span>
+          <span class="info-label">Приоритет:</span>
           <span class="info-value">{{ appeal.get_priority_display }}</span>
         </div>
       </div>
     </div>
 
     <div class="detail-item">
-      <label>📌 Заголовок</label>
+      <label>Заголовок</label>
       <p class="appeal-title">{{ appeal.title }}</p>
     </div>
 
     <div class="detail-item">
-      <label>📋 Описание</label>
+      <label>Описание</label>
       <div class="appeal-description">
         {{ appeal.description|linebreaks }}
       </div>
@@ -70,7 +70,7 @@
   <div class="form-actions">
     {% if appeal.author == request.user and appeal.status != 'completed' %}
       <a href="{% url 'appeals:edit_appeal' appeal.id %}" class="btn btn-primary">
-        ✏️ Редактировать
+        Редактировать
       </a>
       <form method="post" action="{% url 'appeals:delete_appeal' appeal.id %}" class="delete-form">
         {% csrf_token %}
