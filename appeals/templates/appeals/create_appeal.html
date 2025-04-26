@@ -34,6 +34,14 @@
       {{ form.description.errors }}
     </div>
 
+   <div class="form-group card-style">
+  <label>🏷 Теги обращения</label>
+  <div class="tags-container">
+    {{ form.tags }}
+  </div>
+  {{ form.tags.errors }}
+</div>
+
     <div class="form-group card-style file-upload">
       <label>
         📎 Прикрепить документы
@@ -58,3 +66,16 @@
   </form>
 </div>
 {% endblock %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    $('.tag-selector').select2({
+        placeholder: "Выберите теги...",
+        allowClear: true,
+        width: '100%'
+    });
+});
+</script>

@@ -15,8 +15,27 @@
   </div>
   {% endif %}
 
-  <h2>Мои обращения</h2>
-  
+  <div class="filter-header">
+    <h2>Мои обращения</h2>
+    <div class="filter-controls">
+      <div class="dropdown" onmouseover="showDropdown()" onmouseleave="hideDropdown()">
+        <button class="btn btn-primary">
+          Фильтровать
+          <span class="dropdown-arrow"></span>
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="?filter_type=title">По названию</a>
+          <a class="dropdown-item" href="?filter_type=id">По номеру</a>
+          <a class="dropdown-item" href="?filter_type=date">По дате</a>
+          {% if current_filter %}
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="?">Сбросить фильтр</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
   {% if appeals %}
     <div class="appeals-grid">
       {% for appeal in appeals %}
@@ -35,6 +54,12 @@
             </div>
           </div>
 
+          <div class="cube-tags">
+            {% for tag in appeal.tags.all %}
+              <span class="tag-pill">{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+
           <div class="cube-date">
             <svg width="16" height="16" viewBox="0 0 24 24">
               <path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8m-1-13h2v6h-2V7m0 8h2v2h-2v-2"/>
@@ -45,14 +70,150 @@
       {% endfor %}
     </div>
   {% else %}
-<div class="empty-state">
-    <div class="empty-icon"></div>
-    <h3>Обращений пока нет</h3>
-    <p>Начните с создания нового обращения</p>
-    <a href="{% url 'appeals:create_appeal' %}" class="btn btn-primary">
-    Создать обращение
-  </a>
+    <div class="empty-state">
+      <div class="empty-icon"></div>
+      <h3>{% if current_filter %}Ничего не найдено{% else %}Обращений пока нет{% endif %}</h3>
+      <p>{% if current_filter %}Попробуйте изменить параметры фильтра{% else %}Начните с создания нового обращения{% endif %}</p>
+      <a href="{% url 'appeals:create_appeal' %}" class="btn btn-primary">
+        Создать обращение
+      </a>
+    </div>
+  {% endif %}
 </div>
-{% endif %}
-</div>
+
+<style>
+
+  .filter-controls .btn {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 200px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 168, 107, 0.15);
+  border-radius: 8px;
+  padding: 0.5rem;
+  z-index: 100;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu {
+  display: block;
+}
+
+.cube-tags {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-pill {
+  background: #e0f5eb;
+  color: var(--dark);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dropdown-arrow {
+  display: inline-block;
+  margin-left: 0.5rem;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  padding: 3px;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--dark);
+  text-decoration: none;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+
+.dropdown-item:hover {
+  background: #f8fffb;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e0f5eb;
+  margin: 0.5rem 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .dropdown:hover .dropdown-menu {
+    display: none;
+  }
+
+  .dropdown.active .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-arrow {
+    transform: rotate(225deg);
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const dropdown = document.querySelector('.dropdown');
+  const menu = dropdown.querySelector('.dropdown-menu');
+  let timeoutId;
+
+  dropdown.addEventListener('mouseenter', function() {
+    clearTimeout(timeoutId);
+    menu.style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', function() {
+    timeoutId = setTimeout(() => {
+      menu.style.display = 'none';
+    }, 300);
+  });
+
+  menu.addEventListener('mouseenter', function() {
+    clearTimeout(timeoutId);
+  });
+
+  menu.addEventListener('mouseleave', function() {
+    timeoutId = setTimeout(() => {
+      menu.style.display = 'none';
+    }, 300);
+  });
+
+});
+</script>
 {% endblock %}

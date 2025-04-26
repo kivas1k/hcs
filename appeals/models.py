@@ -1,6 +1,16 @@
 from django.db import models
 from users.models import User
 
+class Tag(models.Model):
+    name = models.CharField('Название', max_length=50, unique=True)
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
+    def __str__(self):
+        return self.name
 
 class Appeal(models.Model):
     STATUS_CHOICES = [
@@ -22,10 +32,10 @@ class Appeal(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appeals')
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
+    tags = models.ManyToManyField(Tag, verbose_name='Теги', blank=True)
 
     def __str__(self):
         return self.title
-
 
 class AppealDocument(models.Model):
     appeal = models.ForeignKey(Appeal, on_delete=models.CASCADE, related_name='documents')

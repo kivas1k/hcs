@@ -4,16 +4,18 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Appeal, AppealDocument
 from .forms import AppealForm, DocumentForm
+from django.utils import timezone
 @login_required
 def create_appeal(request):
     if request.method == 'POST':
-        form = AppealForm(request.POST)  # Переименовано в form
+        form = AppealForm(request.POST)
         document_form = DocumentForm(request.POST, request.FILES)
 
-        if form.is_valid():  # Используем form вместо appeal_form
+        if form.is_valid():
             appeal = form.save(commit=False)
             appeal.author = request.user
             appeal.save()
+            form.save_m2m()
 
             files = request.FILES.getlist('files')
             for f in files:
@@ -30,10 +32,30 @@ def create_appeal(request):
         'document_form': document_form
     })
 
+
 @login_required
 def my_appeals(request):
-    appeals = Appeal.objects.filter(author=request.user).order_by('-created_at')
-    return render(request, 'appeals/my_appeals.html', {'appeals': appeals})
+    sort_mapping = {
+        'title': 'title',
+        'id': 'id',
+        'date': '-created_at'
+    }
+
+    filter_type = request.GET.get('filter_type', 'date')
+    order_field = sort_mapping.get(filter_type, '-created_at')
+
+    appeals = Appeal.objects.filter(author=request.user).order_by(order_field)
+
+    if filter_type == 'title':
+        appeals = sorted(
+            appeals,
+            key=lambda x: (not x.title.isdigit(), x.title.lower())
+        )
+
+    return render(request, 'appeals/my_appeals.html', {
+        'appeals': appeals,
+        'current_filter': filter_type
+    })
 
 @login_required
 def appeal_detail(request, appeal_id):
@@ -56,7 +78,6 @@ def edit_appeal(request, appeal_id):
         if appeal_form.is_valid():
             appeal = appeal_form.save()
 
-            # Добавление новых файлов
             files = request.FILES.getlist('files')
             for f in files:
                 AppealDocument.objects.create(appeal=appeal, file=f)

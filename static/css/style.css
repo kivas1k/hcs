@@ -92,11 +92,11 @@ body {
 }
 
 .btn-outline {
-  border: 2px solid white;
-  color: white;
-  margin-left: 1rem;
-  background: transparent;
-}
+    border: 2px solid #029e6d;
+    color: #12a339;
+    margin-left: 1rem;
+    background: transparent;
+  }
 
 .features {
   max-width: 1200px;
@@ -537,7 +537,7 @@ body {
 
 .cube-status.in_progress {
   background: #cfe2ff;
-  color: #084298;
+  color: #30cb73;
 }
 
 .cube-status.completed {

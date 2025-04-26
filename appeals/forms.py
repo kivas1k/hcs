@@ -1,10 +1,17 @@
 from django import forms
-from .models import Appeal
+from .models import Appeal, Tag
 
 class AppealForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'tags-checkbox'}),
+        required=False,
+        label='Теги'
+    )
+
     class Meta:
         model = Appeal
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),

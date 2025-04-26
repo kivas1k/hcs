@@ -50,6 +50,17 @@
       </div>
     </div>
 
+    <div class="detail-item">
+  <label>🏷 Теги</label>
+  <div class="tags-list">
+    {% for tag in appeal.tags.all %}
+      <span class="tag-badge">{{ tag.name }}</span>
+    {% empty %}
+      <span class="text-muted">Теги не указаны</span>
+    {% endfor %}
+  </div>
+</div>
+
     {% if documents %}
     <div class="detail-item">
       <label>📎 Прикрепленные документы</label>
@@ -67,6 +78,7 @@
     {% endif %}
   </div>
 
+
   <div class="form-actions">
     {% if appeal.author == request.user and appeal.status != 'completed' %}
       <a href="{% url 'appeals:edit_appeal' appeal.id %}" class="btn btn-primary">
@@ -80,9 +92,6 @@
         </button>
       </form>
     {% endif %}
-    <a href="{% url 'appeals:my_appeals' %}" class="btn btn-outline">
-      ← Назад к списку
-    </a>
   </div>
 </div>
 {% endblock %}
