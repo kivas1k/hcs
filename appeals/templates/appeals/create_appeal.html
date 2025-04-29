@@ -34,13 +34,19 @@
       {{ form.description.errors }}
     </div>
 
-   <div class="form-group card-style">
-  <label>🏷 Теги обращения</label>
-  <div class="tags-container">
-    {{ form.tags }}
-  </div>
-  {{ form.tags.errors }}
-</div>
+    <div class="form-group card-style">
+      <label>🏷 Теги обращения</label>
+      <div class="tags-container">
+        {% for checkbox in form.tags %}
+          <label class="tag-button">
+            {{ checkbox.tag }}
+            <span class="custom-checkbox"></span>
+            <span class="tag-label">{{ checkbox.choice_label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+      {{ form.tags.errors }}
+    </div>
 
     <div class="form-group card-style file-upload">
       <label>
@@ -65,17 +71,93 @@
     </button>
   </form>
 </div>
-{% endblock %}
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.tag-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: 2px solid #e0f5eb;
+  border-radius: 20px;
+  background: #f8fffb;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+  position: relative;
+}
+
+.tag-button:hover {
+  background: #e0f5eb;
+}
+
+.tag-button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.tag-button input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
+  margin-right: 8px;
+  transition: all 0.2s;
+}
+
+.tag-button.active .custom-checkbox {
+  border-color: white;
+  background: white;
+}
+
+.tag-button.active .custom-checkbox::after {
+  content: '✓';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary);
+  font-size: 14px;
+}
+
+.tag-label {
+  font-weight: 500;
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    $('.tag-selector').select2({
-        placeholder: "Выберите теги...",
-        allowClear: true,
-        width: '100%'
+  document.querySelectorAll('.tag-button').forEach(button => {
+    const checkbox = button.querySelector('input[type="checkbox"]');
+    if(checkbox.checked) {
+      button.classList.add('active');
+    }
+  });
+
+  document.querySelectorAll('.tag-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+      const checkbox = this.querySelector('input[type="checkbox"]');
+      checkbox.checked = !checkbox.checked;
+      this.classList.toggle('active', checkbox.checked);
+
+      const event = new Event('change', { bubbles: true });
+      checkbox.dispatchEvent(event);
     });
+  });
 });
 </script>
+{% endblock %}
