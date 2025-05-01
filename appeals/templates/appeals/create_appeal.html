@@ -25,6 +25,18 @@
       {{ form.title.errors }}
     </div>
 
+     <div class="form-group card-style">
+      <label for="{{ form.full_name.id_for_label }}">👤 ФИО</label>
+      {{ form.full_name }}
+      {{ form.full_name.errors }}
+    </div>
+
+    <div class="form-group card-style">
+      <label for="{{ form.address.id_for_label }}">🏠 Адрес проживания</label>
+      {{ form.address }}
+      {{ form.address.errors }}
+    </div>
+
     <div class="form-group card-style">
       <label for="{{ form.description.id_for_label }}">
         Подробное описание

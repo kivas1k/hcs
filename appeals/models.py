@@ -27,6 +27,8 @@ class Appeal(models.Model):
 
     title = models.CharField('Заголовок', max_length=200)
     description = models.TextField('Описание')
+    address = models.CharField('Адрес проживания', max_length=200)  # Новое поле
+    full_name = models.CharField('ФИО', max_length=150)  # Новое поле
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
     priority = models.CharField('Приоритет', max_length=20, choices=PRIORITY_CHOICES, default='medium')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appeals')

@@ -95,3 +95,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Настройки для версии для слабовидящих
 ACCESSIBILITY_MODE_COOKIE_NAME = 'accessibility_mode'
 ACCESSIBILITY_MODE_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 дней
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+ADMIN_SITE_HEADER = "Панель сотрудника"

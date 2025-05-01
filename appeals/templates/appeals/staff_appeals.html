@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Обращения — ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<div class="auth-form">
+  <div class="filter-header">
+    <h2>Все обращения</h2>
+    <div class="appeal-stats">
+      <span class="stat-item">Всего: {{ appeals.count }}</span>
+    </div>
+  </div>
+
+  <div class="appeals-grid staff">
+    {% for appeal in appeals %}
+      <div class="appeal-cube staff">
+        <div class="cube-header">
+          <h3>{{ appeal.title|truncatechars:40 }}</h3>
+          <span class="cube-status {{ appeal.status }}">
+            {{ appeal.get_status_display }}
+          </span>
+        </div>
+
+        <div class="cube-meta">
+          <div class="meta-item">
+            <span class="meta-label">Автор:</span>
+            {{ appeal.author.get_full_name|default:appeal.author.username }}
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Приоритет:</span>
+            {{ appeal.get_priority_display }}
+          </div>
+        </div>
+
+        <div class="cube-tags">
+          <form method="post" action="{% url 'appeals:staff_edit_tags' appeal.id %}">
+            {% csrf_token %}
+            {% for tag in appeal.tags.all %}
+              <span class="tag-pill">{{ tag.name }}</span>
+            {% endfor %}
+            <button type="button" 
+                    class="btn btn-icon edit-tags-btn"
+                    onclick="location.href='{% url 'appeals:staff_edit_tags' appeal.id %}'">
+              ✏️ Изменить теги
+            </button>
+          </form>
+        </div>
+
+        <div class="cube-actions">
+          <a href="{% url 'appeals:appeal_detail' appeal.id %}" 
+             class="btn btn-outline">
+            Подробнее
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

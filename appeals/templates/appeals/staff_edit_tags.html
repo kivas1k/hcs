@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование тегов обращения #{{ appeal.id }} — ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<div class="auth-form">
+  <h2>Редактирование тегов для обращения #{{ appeal.id }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="form-group card-style">
+      <label>🏷 Теги обращения</label>
+      <div class="tags-container">
+        {% for checkbox in form.tags %}
+          <label class="tag-button">
+            {{ checkbox.tag }}
+            <span class="custom-checkbox"></span>
+            <span class="tag-label">{{ checkbox.choice_label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        Сохранить изменения
+      </button>
+      <a href="{% url 'appeals:staff_appeals' %}" class="btn btn-outline">
+        Отмена
+      </a>
+    </div>
+  </form>
+</div>
+
+<style>
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.tag-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: 2px solid #e0f5eb;
+  border-radius: 20px;
+  background: #f8fffb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-button:hover {
+  background: #e0f5eb;
+}
+
+.tag-button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
+  margin-right: 8px;
+  transition: all 0.2s;
+}
+</style>
+{% endblock %}

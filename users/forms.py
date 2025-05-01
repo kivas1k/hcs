@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
+from django.contrib.auth.forms import UserChangeForm
 
 class PhoneInput(forms.TextInput):
     def __init__(self, *args, **kwargs):
@@ -9,7 +10,7 @@ class PhoneInput(forms.TextInput):
             'placeholder': '+79999999999',
             'pattern': r'\+7\d{10}',
             'title': 'Введите номер в формате +79999999999',
-            'class': 'form-control'  # Добавляем общий класс
+            'class': 'form-control'
         })
         super().__init__(*args, **kwargs)
 
@@ -21,6 +22,14 @@ class RegisterForm(UserCreationForm):
             'class': 'form-control'
         }),
         help_text=''
+    )
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'Введите ваш email',
+            'class': 'form-control'
+        }),
+        required=True
     )
     phone = forms.CharField(
         label='Телефон',
@@ -46,7 +55,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'phone', 'password1', 'password2']
+        fields = ['username', 'email', 'phone', 'password1', 'password2']
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -63,3 +72,14 @@ class LoginForm(forms.Form):
             'class': 'form-control'
         })
     )
+
+class EditProfileForm(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'phone']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone': PhoneInput(),
+        }

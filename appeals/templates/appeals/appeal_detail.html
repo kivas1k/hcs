@@ -43,6 +43,16 @@
       <p class="appeal-title">{{ appeal.title }}</p>
     </div>
 
+     <div class="detail-item">
+    <label>👤 ФИО</label>
+    <p class="appeal-title">{{ appeal.full_name }}</p>
+  </div>
+
+  <div class="detail-item">
+    <label>🏠 Адрес проживания</label>
+    <p class="appeal-title">{{ appeal.address }}</p>
+  </div>
+
     <div class="detail-item">
       <label>Описание</label>
       <div class="appeal-description">
@@ -61,23 +71,28 @@
   </div>
 </div>
 
-    {% if documents %}
-    <div class="detail-item">
-      <label>📎 Прикрепленные документы</label>
-      <div class="document-list">
-        {% for document in documents %}
-          <div class="document-item">
-            <a href="{{ document.file.url }}" target="_blank" class="document-link">
-              {{ document.file.name|slice:"15:"|truncatechars:30 }}
-            </a>
-            <span class="document-size">{{ document.file.size|filesizeformat }}</span>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
+{% if documents %}
+<div class="detail-item">
+  <label>📎 Прикрепленные документы</label>
+  <div class="document-list">
+    {% if appeal.author == request.user or request.user.role in 'staff admin' %}
+      <a href="{% url 'appeals:download_all_documents' appeal.id %}"
+         class="btn btn-primary download-all-btn">
+        Скачать все файлы
+      </a>
     {% endif %}
-  </div>
 
+    {% for document in documents %}
+      <div class="document-item">
+        <a href="{{ document.file.url }}" target="_blank" class="document-link">
+          {{ document.file.name|slice:"15:"|truncatechars:30 }}
+        </a>
+        <span class="document-size">{{ document.file.size|filesizeformat }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
 
   <div class="form-actions">
     {% if appeal.author == request.user and appeal.status != 'completed' %}
@@ -88,7 +103,7 @@
         {% csrf_token %}
         <button type="submit" class="btn btn-danger"
                 onclick="return confirm('Вы уверены что хотите удалить обращение?')">
-          🗑️ Удалить
+          Удалить
         </button>
       </form>
     {% endif %}
