@@ -24,7 +24,7 @@
         <div class="cube-meta">
           <div class="meta-item">
             <span class="meta-label">Автор:</span>
-            {{ appeal.author.get_full_name|default:appeal.author.username }}
+            {{ appeal.author.username }}  <!-- Исправлено: только логин -->
           </div>
           <div class="meta-item">
             <span class="meta-label">Приоритет:</span>

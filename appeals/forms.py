@@ -33,7 +33,6 @@ class AppealForm(forms.ModelForm):
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 5,
-                'placeholder': 'Опишите проблему подробно...'
             }),
         }
 

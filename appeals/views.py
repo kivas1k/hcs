@@ -36,7 +36,6 @@ def create_appeal(request):
                 AppealDocument.objects.create(appeal=appeal, file=f)
 
             return redirect('home')
-
     else:
         form = AppealForm()
         document_form = DocumentForm()
@@ -70,13 +69,11 @@ def my_appeals(request):
         'current_filter': filter_type
     })
 
-
 @login_required
 def appeal_detail(request, appeal_id):
     if request.user.role in ['staff', 'admin']:
         appeal = get_object_or_404(Appeal, id=appeal_id)
     else:
-
         appeal = get_object_or_404(Appeal, id=appeal_id, author=request.user)
 
     documents = AppealDocument.objects.filter(appeal=appeal)
@@ -133,7 +130,6 @@ def delete_document(request, document_id):
 
 @login_required
 def download_all_documents(request, appeal_id):
-
     if request.user.role in ['staff', 'admin']:
         appeal = get_object_or_404(Appeal, id=appeal_id)
     else:

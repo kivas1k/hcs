@@ -28,6 +28,19 @@
       {{ appeal_form.title.errors }}
     </div>
 
+    <!-- Добавлены поля full_name и address -->
+    <div class="form-group card-style">
+      <label for="{{ appeal_form.full_name.id_for_label }}">👤 ФИО</label>
+      {{ appeal_form.full_name }}
+      {{ appeal_form.full_name.errors }}
+    </div>
+
+    <div class="form-group card-style">
+      <label for="{{ appeal_form.address.id_for_label }}">🏠 Адрес проживания</label>
+      {{ appeal_form.address }}
+      {{ appeal_form.address.errors }}
+    </div>
+
     <div class="form-group card-style">
       <label for="{{ appeal_form.description.id_for_label }}">📝 Описание</label>
       {{ appeal_form.description }}
@@ -45,7 +58,11 @@
           </label>
         {% endfor %}
       </div>
-      {{ appeal_form.tags.errors }}
+      {% if appeal_form.tags.errors %}
+        <div class="alert alert-danger mt-2">
+          {{ appeal_form.tags.errors }}
+        </div>
+      {% endif %}
     </div>
 
     {% if documents %}
