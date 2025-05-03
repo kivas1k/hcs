@@ -154,9 +154,26 @@ def download_all_documents(request, appeal_id):
 
 @staff_required
 def staff_appeals(request):
-    appeals = Appeal.objects.all().order_by('-created_at')
+    sort_mapping = {
+        'title': 'title',
+        'id': 'id',
+        'date': '-created_at'
+    }
+
+    filter_type = request.GET.get('filter_type', 'date')
+    order_field = sort_mapping.get(filter_type, '-created_at')
+
+    appeals = Appeal.objects.all().order_by(order_field)
+
+    if filter_type == 'title':
+        appeals = sorted(
+            appeals,
+            key=lambda x: (not x.title.isdigit(), x.title.lower())
+        )
+
     return render(request, 'appeals/staff_appeals.html', {
-        'appeals': appeals
+        'appeals': appeals,
+        'current_filter': filter_type
     })
 
 @staff_required

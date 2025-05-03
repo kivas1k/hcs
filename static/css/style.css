@@ -935,3 +935,119 @@ body {
   justify-content: center;
   margin: 0 auto; /* Центрирование кнопки в контейнере */
 }
+
+/* ================== Фильтры и сортировка ================== */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 200px;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 168, 107, 0.15);
+  border-radius: 8px;
+  padding: 0.5rem;
+  z-index: 100;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu {
+  display: block;
+}
+
+.dropdown-arrow {
+  display: inline-block;
+  margin-left: 0.5rem;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  padding: 3px;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--dark);
+  text-decoration: none;
+  transition: all 0.2s;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+  background: #f8fffb;
+  color: var(--primary);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e0f5eb;
+  margin: 0.5rem 0;
+}
+
+.cube-tags {
+  margin: 0.5rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-pill {
+  background: #e0f5eb;
+  color: var(--dark);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.tag-pill:hover {
+  background: var(--primary);
+  color: white;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .filter-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dropdown-menu {
+    left: 0;
+    right: auto;
+  }
+
+  .dropdown-arrow {
+    transform: rotate(225deg);
+  }
+}
