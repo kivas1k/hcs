@@ -16,7 +16,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'appeals.apps.AppealsConfig',
-    # 'comments.apps.CommentsConfig',
     # 'faq.apps.FaqConfig',
     # 'notifications.apps.NotificationsConfig',
     # 'reports.apps.ReportsConfig',

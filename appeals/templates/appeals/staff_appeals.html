@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="appeal-stats">
-      <span class="stat-item">Всего: {{ appeals.count }}</span>
+      <span class="stat-item">Всего: {{ appeals_count }}</span>
     </div>
   </div>
 
@@ -65,10 +65,10 @@
           </a>
 
           <div class="card-actions">
-            <a href="{% url 'appeals:staff_edit_tags' appeal.id %}"
-               class="tag-edit-btn">
-              ✏️ Изменить теги
-            </a>
+           <a href="{% url 'appeals:staff_edit_appeal' appeal.id %}"
+   class="tag-edit-btn">
+  ✏️ Редактировать
+</a>
           </div>
         </div>
       {% endfor %}

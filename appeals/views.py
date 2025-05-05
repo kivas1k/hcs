@@ -1,13 +1,13 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 import zipfile
 import os
 from django.conf import settings
 from io import BytesIO
-from .models import Appeal, AppealDocument
-from .forms import AppealForm, DocumentForm, StaffAppealForm
+from .models import Appeal, AppealDocument, Comment
+from .forms import AppealForm, DocumentForm, StaffAppealForm, CommentForm
 
 def staff_required(view_func=None):
     def check_staff(user):
@@ -77,9 +77,30 @@ def appeal_detail(request, appeal_id):
         appeal = get_object_or_404(Appeal, id=appeal_id, author=request.user)
 
     documents = AppealDocument.objects.filter(appeal=appeal)
+    comments = appeal.comments.all().order_by('created_at')
+    comment_form = None
+
+    if request.method == 'POST':
+        if 'text' in request.POST:
+            if request.user.is_authenticated and (request.user == appeal.author or request.user.is_staff):
+                form = CommentForm(request.POST)
+                if form.is_valid():
+                    comment = form.save(commit=False)
+                    comment.appeal = appeal
+                    comment.author = request.user
+                    comment.save()
+                    return redirect('appeals:appeal_detail', appeal_id=appeal_id)
+            else:
+                return HttpResponseForbidden("У вас нет прав оставлять комментарии")
+
+    if request.user.is_authenticated and (request.user == appeal.author or request.user.is_staff):
+        comment_form = CommentForm()
+
     return render(request, 'appeals/appeal_detail.html', {
         'appeal': appeal,
-        'documents': documents
+        'documents': documents,
+        'comments': comments,
+        'comment_form': comment_form
     })
 
 @login_required
@@ -163,32 +184,35 @@ def staff_appeals(request):
     filter_type = request.GET.get('filter_type', 'date')
     order_field = sort_mapping.get(filter_type, '-created_at')
 
-    appeals = Appeal.objects.all().order_by(order_field)
+    appeals_qs = Appeal.objects.all()
 
-    if filter_type == 'title':
-        appeals = sorted(
-            appeals,
-            key=lambda x: (not x.title.isdigit(), x.title.lower())
-        )
+    if filter_type in ['id', 'date']:
+        appeals = appeals_qs.order_by(order_field)
+    elif filter_type == 'title':
+        appeals = sorted(appeals_qs, key=lambda x: (not x.title.isdigit(), x.title.lower()))
+    else:
+        appeals = appeals_qs
 
     return render(request, 'appeals/staff_appeals.html', {
         'appeals': appeals,
+        'appeals_count': appeals_qs.count(),
         'current_filter': filter_type
     })
 
+
 @staff_required
-def staff_edit_tags(request, appeal_id):
+def staff_edit_appeal(request, appeal_id):
     appeal = get_object_or_404(Appeal, id=appeal_id)
     if request.method == 'POST':
         form = StaffAppealForm(request.POST, instance=appeal)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Теги обновлены')
+            messages.success(request, 'Изменения сохранены')
             return redirect('appeals:staff_appeals')
     else:
         form = StaffAppealForm(instance=appeal)
 
-    return render(request, 'appeals/staff_edit_tags.html', {
+    return render(request, 'appeals/staff_edit_appeal.html', {
         'form': form,
         'appeal': appeal
     })

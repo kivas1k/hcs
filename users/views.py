@@ -37,11 +37,9 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-
 @login_required
 def profile_view(request):
     return render(request, 'users/profile.html')
-
 
 @login_required
 def edit_profile_view(request):

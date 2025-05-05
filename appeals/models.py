@@ -47,3 +47,19 @@ class AppealDocument(models.Model):
     def __str__(self):
         return f"Document for {self.appeal.title}"
 
+class Comment(models.Model):
+    appeal = models.ForeignKey(Appeal, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField('Текст комментария')
+    created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return f'Комментарий от {self.author.username} к обращению {self.appeal.id}'
+
+    def is_staff_comment(self):
+        return self.author.role in ['staff', 'admin']

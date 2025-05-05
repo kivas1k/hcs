@@ -43,15 +43,15 @@
       <p class="appeal-title">{{ appeal.title }}</p>
     </div>
 
-     <div class="detail-item">
-    <label>👤 ФИО</label>
-    <p class="appeal-title">{{ appeal.full_name }}</p>
-  </div>
+    <div class="detail-item">
+      <label>👤 ФИО</label>
+      <p class="appeal-title">{{ appeal.full_name }}</p>
+    </div>
 
-  <div class="detail-item">
-    <label>🏠 Адрес проживания</label>
-    <p class="appeal-title">{{ appeal.address }}</p>
-  </div>
+    <div class="detail-item">
+      <label>🏠 Адрес проживания</label>
+      <p class="appeal-title">{{ appeal.address }}</p>
+    </div>
 
     <div class="detail-item">
       <label>Описание</label>
@@ -61,52 +61,212 @@
     </div>
 
     <div class="detail-item">
-  <label>🏷 Теги</label>
-  <div class="tags-list">
-    {% for tag in appeal.tags.all %}
-      <span class="tag-badge">{{ tag.name }}</span>
-    {% empty %}
-      <span class="text-muted">Теги не указаны</span>
-    {% endfor %}
-  </div>
-</div>
-
-{% if documents %}
-<div class="detail-item">
-  <label>📎 Прикрепленные документы</label>
-  <div class="document-list">
-    {% if appeal.author == request.user or request.user.role in 'staff admin' %}
-      <a href="{% url 'appeals:download_all_documents' appeal.id %}"
-         class="btn btn-primary download-all-btn">
-        Скачать все файлы
-      </a>
-    {% endif %}
-
-    {% for document in documents %}
-      <div class="document-item">
-        <a href="{{ document.file.url }}" target="_blank" class="document-link">
-          {{ document.file.name|slice:"15:"|truncatechars:30 }}
-        </a>
-        <span class="document-size">{{ document.file.size|filesizeformat }}</span>
+      <label>🏷 Теги</label>
+      <div class="tags-list">
+        {% for tag in appeal.tags.all %}
+          <span class="tag-badge">{{ tag.name }}</span>
+        {% empty %}
+          <span class="text-muted">Теги не указаны</span>
+        {% endfor %}
       </div>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
+    </div>
 
-  <div class="form-actions">
-    {% if appeal.author == request.user and appeal.status != 'completed' %}
-      <a href="{% url 'appeals:edit_appeal' appeal.id %}" class="btn btn-primary">
-        Редактировать
-      </a>
-      <form method="post" action="{% url 'appeals:delete_appeal' appeal.id %}" class="delete-form">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger"
-                onclick="return confirm('Вы уверены что хотите удалить обращение?')">
-          Удалить
-        </button>
-      </form>
+    {% if documents %}
+    <div class="detail-item">
+      <label>📎 Прикрепленные документы</label>
+      <div class="document-list">
+        {% if appeal.author == request.user or request.user.role in 'staff admin' %}
+          <a href="{% url 'appeals:download_all_documents' appeal.id %}"
+             class="btn btn-primary download-all-btn">
+            Скачать все файлы
+          </a>
+        {% endif %}
+
+        {% for document in documents %}
+          <div class="document-item">
+            <a href="{{ document.file.url }}" target="_blank" class="document-link">
+              {{ document.file.name|slice:"15:"|truncatechars:30 }}
+            </a>
+            <span class="document-size">{{ document.file.size|filesizeformat }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
     {% endif %}
+
+    <div class="comments-section">
+      <h3>📨 История комментариев</h3>
+
+      <div class="comment-list">
+        {% for comment in comments %}
+          <div class="comment {% if comment.author.role in 'staff admin' %}staff{% else %}user{% endif %}">
+            <div class="comment-header">
+              <span class="comment-author">
+                {% if comment.author.role in 'staff admin' %}
+                  🛠 {{ comment.author.username }}
+                {% else %}
+                  👤 {{ comment.author.username }}
+                {% endif %}
+              </span>
+              <span class="comment-date">
+                {{ comment.created_at|date:"d.m.Y H:i" }}
+              </span>
+            </div>
+            <div class="comment-text">
+              {{ comment.text|linebreaks }}
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">Пока нет комментариев</p>
+        {% endfor %}
+      </div>
+
+      {% if comment_form %}
+        <form method="post" class="comment-form">
+          {% csrf_token %}
+          <div class="form-group card-style">
+            <label for="{{ comment_form.text.id_for_label }}">
+              Ваш комментарий
+              <span class="required">*</span>
+            </label>
+            {{ comment_form.text }}
+            {{ comment_form.text.errors }}
+          </div>
+          <button type="submit" class="btn btn-primary submit-btn">
+            Отправить комментарий
+            <svg width="20" height="20" viewBox="0 0 24 24" class="submit-icon">
+              <path fill="currentColor" d="M2 21v-2h20v2H2zm3.9-4.8-1.4-1.4L12 6l7.5 7.8-1.4 1.4L12 9 5.9 16.2z"/>
+            </svg>
+          </button>
+        </form>
+      {% endif %}
+    </div>
+
+    <div class="form-actions">
+      {% if appeal.author == request.user and appeal.status != 'completed' %}
+        <a href="{% url 'appeals:edit_appeal' appeal.id %}" class="btn btn-primary">
+          Редактировать
+        </a>
+        <form method="post" action="{% url 'appeals:delete_appeal' appeal.id %}" class="delete-form">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger"
+                  onclick="return confirm('Вы уверены что хотите удалить обращение?')">
+            Удалить
+          </button>
+        </form>
+      {% endif %}
+    </div>
   </div>
 </div>
+
+<style>
+.comment-form .form-group.card-style {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.comment-form label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    resize: vertical;
+    min-height: 100px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.comment-form textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: transform 0.2s;
+}
+
+.submit-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-1px);
+}
+
+.required {
+    color: #e74c3c;
+    font-size: 0.9em;
+}
+
+.comments-section {
+    margin-top: 40px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.comment {
+    margin: 15px 0;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 85%;
+    position: relative;
+}
+
+.comment.staff {
+    background: #f0f4f8;
+    margin-right: auto;
+    border: 1px solid #d3e0f0;
+}
+
+.comment.user {
+    background: #e3f2fd;
+    margin-left: auto;
+    border: 1px solid #bbdefb;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #666;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.comment-date {
+    color: #7f8c8d;
+    font-size: 0.85em;
+}
+
+.comment-text {
+    color: #34495e;
+    line-height: 1.5;
+}
+
+</style>
 {% endblock %}

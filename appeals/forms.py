@@ -1,5 +1,5 @@
 from django import forms
-from .models import Appeal, Tag
+from .models import Appeal, Tag, Comment
 
 class AppealForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
@@ -54,3 +54,40 @@ class DocumentForm(forms.Form):
         label='Прикрепите документы',
         required=False
     )
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Введите ваш комментарий...'
+            })
+        }
+
+
+class StaffAppealForm(forms.ModelForm):
+    status = forms.ChoiceField(
+        label='Статус',
+        choices=Appeal.STATUS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    priority = forms.ChoiceField(
+        label='Приоритет',
+        choices=Appeal.PRIORITY_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'tags-checkbox'}),
+        required=False,
+        label='Теги'
+    )
+
+    class Meta:
+        model = Appeal
+        fields = ['status', 'priority', 'tags']
