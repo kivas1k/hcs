@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.utils import timezone
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponse, HttpResponseForbidden
@@ -206,6 +207,9 @@ def staff_edit_appeal(request, appeal_id):
     if request.method == 'POST':
         form = StaffAppealForm(request.POST, instance=appeal)
         if form.is_valid():
+            if form.cleaned_data['employee_status'] == 'closed' and not appeal.closed_by:
+                appeal.closed_by = request.user
+                appeal.closed_at = timezone.now()
             form.save()
             messages.success(request, 'Изменения сохранены')
             return redirect('appeals:staff_appeals')
@@ -216,3 +220,29 @@ def staff_edit_appeal(request, appeal_id):
         'form': form,
         'appeal': appeal
     })
+
+
+@staff_required
+def staff_change_status(request, appeal_id, new_status):
+    appeal = get_object_or_404(Appeal, id=appeal_id)
+    user = request.user
+
+    if request.method == 'POST':
+        if new_status == 'in_progress':
+            appeal.employee_status = 'in_progress'
+            appeal.taken_by = user
+            appeal.taken_at = timezone.now()
+        elif new_status == 'closed':
+            appeal.employee_status = 'closed'
+            appeal.closed_by = user
+            appeal.closed_at = timezone.now()
+        else:
+            appeal.employee_status = 'free'
+            appeal.taken_by = None
+            appeal.taken_at = None
+
+        appeal.save()
+        messages.success(request, 'Статус успешно обновлен')
+        return redirect('appeals:staff_appeals')
+
+    return HttpResponseForbidden("Недопустимый метод запроса")

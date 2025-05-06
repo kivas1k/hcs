@@ -13,4 +13,5 @@ urlpatterns = [
     path('<int:appeal_id>/download/', views.download_all_documents, name='download_all_documents'),
     path('staff/all/', views.staff_appeals, name='staff_appeals'),
     path('staff/<int:appeal_id>/edit/', views.staff_edit_appeal, name='staff_edit_appeal'),
+    path('staff/<int:appeal_id>/status/<str:new_status>/', views.staff_change_status,  name='staff_change_status'),
 ]

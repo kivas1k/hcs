@@ -25,6 +25,37 @@ class Appeal(models.Model):
         ('high', 'Высокий'),
     ]
 
+    EMPLOYEE_STATUS_CHOICES = [
+        ('free', 'Свободное'),
+        ('in_progress', 'В работе'),
+        ('closed', 'Закрыто'),
+    ]
+
+    employee_status = models.CharField(
+        max_length=20,
+        choices=EMPLOYEE_STATUS_CHOICES,
+        default='free',
+        verbose_name='Статус для сотрудников'
+    )
+    taken_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='taken_appeals',
+        verbose_name='Взял сотрудник'
+    )
+    closed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='closed_appeals',
+        verbose_name='Закрыл сотрудник'
+    )
+    taken_at = models.DateTimeField(null=True, blank=True, verbose_name='Взято в работу')
+    closed_at = models.DateTimeField(null=True, blank=True, verbose_name='Дата закрытия')
+
     title = models.CharField('Заголовок', max_length=200)
     description = models.TextField('Описание')
     address = models.CharField('Адрес проживания', max_length=200, blank=True)  # Необязательное

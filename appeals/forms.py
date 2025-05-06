@@ -74,18 +74,32 @@ class StaffAppealForm(forms.ModelForm):
         choices=Appeal.STATUS_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
     priority = forms.ChoiceField(
         label='Приоритет',
         choices=Appeal.PRIORITY_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'tags-checkbox'}),
         required=False,
         label='Теги'
+    )
+    employee_status = forms.ChoiceField(
+        label='Статус для сотрудников',
+        choices=Appeal.EMPLOYEE_STATUS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    class Meta:
+        model = Appeal
+        fields = ['status', 'priority', 'tags', 'employee_status']
+
+class ChangeEmployeeStatusForm(forms.Form):
+    status = forms.ChoiceField(
+        choices=Appeal.EMPLOYEE_STATUS_CHOICES,
+        widget=forms.HiddenInput()
     )
 
     class Meta:
