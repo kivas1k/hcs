@@ -55,11 +55,17 @@ class Appeal(models.Model):
     )
     taken_at = models.DateTimeField(null=True, blank=True, verbose_name='Взято в работу')
     closed_at = models.DateTimeField(null=True, blank=True, verbose_name='Дата закрытия')
-
+    rating = models.PositiveIntegerField(
+        'Оценка',
+        null=True,
+        blank=True,
+        choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
+    )
+    feedback_comment = models.TextField('Комментарий оценки', null=True, blank=True)
     title = models.CharField('Заголовок', max_length=200)
     description = models.TextField('Описание')
-    address = models.CharField('Адрес проживания', max_length=200, blank=True)  # Необязательное
-    full_name = models.CharField('ФИО', max_length=150, blank=True)            # Необязательное
+    address = models.CharField('Адрес проживания', max_length=200, blank=True)
+    full_name = models.CharField('ФИО', max_length=150, blank=True)
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
     priority = models.CharField('Приоритет', max_length=20, choices=PRIORITY_CHOICES, default='medium')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appeals')

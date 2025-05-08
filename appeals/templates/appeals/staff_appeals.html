@@ -266,21 +266,55 @@
   background: var(--secondary);
 }
 </style>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.status-dropdown').forEach(dropdown => {
-    const menu = dropdown.querySelector('.status-menu');
+  const dropdowns = document.querySelectorAll('.dropdown');
 
-    dropdown.addEventListener('click', function(e) {
-      e.stopPropagation();
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  dropdowns.forEach(dropdown => {
+    const menu = dropdown.querySelector('.dropdown-menu');
+    let timeoutId;
+
+    dropdown.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      menu.style.display = 'block';
     });
 
-    document.addEventListener('click', function(e) {
-      if (!dropdown.contains(e.target)) {
+    dropdown.addEventListener('mouseleave', () => {
+      timeoutId = setTimeout(() => {
         menu.style.display = 'none';
-      }
+      }, 300);
+    });
+
+    menu.addEventListener('mouseenter', () => clearTimeout(timeoutId));
+    menu.addEventListener('mouseleave', () => {
+      timeoutId = setTimeout(() => {
+        menu.style.display = 'none';
+      }, 300);
+    });
+  });
+
+  const statusDropdowns = document.querySelectorAll('.status-dropdown');
+
+  statusDropdowns.forEach(dropdown => {
+    const menu = dropdown.querySelector('.status-menu');
+    let timeoutId;
+
+    dropdown.addEventListener('mouseenter', () => {
+      clearTimeout(timeoutId);
+      menu.style.display = 'block';
+    });
+
+    dropdown.addEventListener('mouseleave', () => {
+      timeoutId = setTimeout(() => {
+        menu.style.display = 'none';
+      }, 300);
+    });
+
+    menu.addEventListener('mouseenter', () => clearTimeout(timeoutId));
+    menu.addEventListener('mouseleave', () => {
+      timeoutId = setTimeout(() => {
+        menu.style.display = 'none';
+      }, 300);
     });
   });
 });

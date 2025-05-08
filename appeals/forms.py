@@ -1,6 +1,27 @@
 from django import forms
 from .models import Appeal, Tag, Comment
 
+
+class FeedbackForm(forms.ModelForm):
+    RATING_CHOICES = [(i, '★' * i) for i in range(1, 6)]
+
+    rating = forms.ChoiceField(
+        label='Оценка',
+        choices=RATING_CHOICES,
+        widget=forms.RadioSelect(attrs={'class': 'star-rating'}),
+        required=True
+    )
+    feedback_comment = forms.CharField(
+        label='Комментарий',
+        widget=forms.Textarea(attrs={'rows': 3}),
+        required=False
+    )
+
+    class Meta:
+        model = Appeal
+        fields = ['rating', 'feedback_comment']
+
+
 class AppealForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
@@ -36,6 +57,7 @@ class AppealForm(forms.ModelForm):
             }),
         }
 
+
 class StaffAppealForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
@@ -48,12 +70,14 @@ class StaffAppealForm(forms.ModelForm):
         model = Appeal
         fields = ['tags']
 
+
 class DocumentForm(forms.Form):
     files = forms.FileField(
         widget=forms.FileInput(attrs={'class': 'form-control'}),
         label='Прикрепите документы',
         required=False
     )
+
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -95,6 +119,7 @@ class StaffAppealForm(forms.ModelForm):
     class Meta:
         model = Appeal
         fields = ['status', 'priority', 'tags', 'employee_status']
+
 
 class ChangeEmployeeStatusForm(forms.Form):
     status = forms.ChoiceField(

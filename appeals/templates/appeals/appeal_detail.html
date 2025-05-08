@@ -142,6 +142,41 @@
       {% endif %}
     </div>
 
+    {% if appeal.status == 'completed' %}
+    <div class="feedback-section">
+      <h3>⭐ Оценка работы сотрудника</h3>
+      {% if show_feedback_form %}
+        <form method="post" class="feedback-form">
+          {% csrf_token %}
+          <div class="star-rating">
+            {{ feedback_form.rating }}
+          </div>
+          <div class="form-group">
+            {{ feedback_form.feedback_comment }}
+          </div>
+          <button type="submit" class="btn btn-primary">Отправить оценку</button>
+        </form>
+      {% else %}
+        <div class="feedback-display">
+          {% if appeal.rating %}
+            <div class="rating-stars">
+              {% with ''|center:appeal.rating as range %}
+                {% for _ in range %}★{% endfor %}
+              {% endwith %}
+            </div>
+            {% if appeal.feedback_comment %}
+              <div class="feedback-comment">
+                {{ appeal.feedback_comment|linebreaks }}
+              </div>
+            {% endif %}
+          {% else %}
+            <p class="text-muted">Оценка еще не поставлена</p>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
     <div class="form-actions">
       {% if appeal.author == request.user and appeal.status != 'completed' %}
         <a href="{% url 'appeals:edit_appeal' appeal.id %}" class="btn btn-primary">
@@ -268,5 +303,51 @@
     line-height: 1.5;
 }
 
+.feedback-section {
+    margin-top: 40px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.star-rating {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.star-rating .star {
+    cursor: pointer;
+    font-size: 24px;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+.star-rating .star:hover,
+.star-rating .star.active {
+    color: #ffd700;
+}
+
+.feedback-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.rating-stars {
+    font-size: 24px;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+
+.feedback-comment {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
 </style>
 {% endblock %}
