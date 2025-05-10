@@ -86,9 +86,10 @@ class AppealDocument(models.Model):
 
 class Comment(models.Model):
     appeal = models.ForeignKey(Appeal, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appeal_comments')
     text = models.TextField('Текст комментария')
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
+    updated_at = models.DateTimeField('Дата изменения', auto_now=True)
 
     class Meta:
         ordering = ['created_at']

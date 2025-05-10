@@ -94,13 +94,14 @@
     </div>
     {% endif %}
 
-    <div class="comments-section">
-      <h3>📨 История комментариев</h3>
+ <div class="comments-section">
+    <h3>📨 История комментариев</h3>
 
-      <div class="comment-list">
-        {% for comment in comments %}
-          <div class="comment {% if comment.author.role in 'staff admin' %}staff{% else %}user{% endif %}">
-            <div class="comment-header">
+    <div class="comment-list">
+      {% for comment in comments %}
+        <div class="comment {% if comment.author.role in 'staff admin' %}staff{% else %}user{% endif %}" id="comment-{{ comment.id }}">
+          <div class="comment-header">
+            <div class="comment-header-left">
               <span class="comment-author">
                 {% if comment.author.role in 'staff admin' %}
                   🛠 {{ comment.author.username }}
@@ -112,14 +113,55 @@
                 {{ comment.created_at|date:"d.m.Y H:i" }}
               </span>
             </div>
-            <div class="comment-text">
-              {{ comment.text|linebreaks }}
-            </div>
+
+            {% if request.user == comment.author %}
+              <div class="comment-actions">
+                    <button type="button"
+            class="btn btn-icon"
+            data-comment-id="{{ comment.id }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+    </button>
+
+  <form method="post" action="{% url 'appeals:delete_comment' comment.id %}" class="delete-comment-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+        </button>
+    </form>
+</div>
+            {% endif %}
           </div>
-        {% empty %}
-          <p class="text-muted">Пока нет комментариев</p>
-        {% endfor %}
-      </div>
+
+          <div class="comment-text">
+            {{ comment.text|linebreaks }}
+          </div>
+
+          <form method="post"
+                action="{% url 'appeals:edit_comment' comment.id %}"
+                class="edit-comment-form"
+                style="display: none;">
+            {% csrf_token %}
+            <div class="form-group">
+              <textarea name="text" class="form-control" rows="3">{{ comment.text }}</textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+              <button type="button"
+                      class="btn btn-outline btn-sm cancel-edit-btn"
+                      data-comment-id="{{ comment.id }}">
+                Отмена
+              </button>
+            </div>
+          </form>
+        </div>
+      {% empty %}
+        <p class="text-muted">Пока нет комментариев</p>
+      {% endfor %}
+    </div>
 
       {% if comment_form %}
         <form method="post" class="comment-form">
@@ -195,6 +237,7 @@
 </div>
 
 <style>
+
 .comment-form .form-group.card-style {
     background: #fff;
     border-radius: 12px;
@@ -350,4 +393,30 @@
     border: 1px solid #eee;
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    document.querySelectorAll('button[data-comment-id]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.dataset.commentId;
+            const commentDiv = document.getElementById(`comment-${commentId}`);
+            commentDiv.querySelector('.comment-header').style.display = 'none';
+            commentDiv.querySelector('.comment-text').style.display = 'none';
+            commentDiv.querySelector('.edit-comment-form').style.display = 'block';
+        });
+    });
+
+    document.querySelectorAll('.cancel-edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.dataset.commentId;
+            const commentDiv = document.getElementById(`comment-${commentId}`);
+            commentDiv.querySelector('.edit-comment-form').style.display = 'none';
+            commentDiv.querySelector('.comment-header').style.display = 'flex';
+            commentDiv.querySelector('.comment-text').style.display = 'block';
+        });
+    });
+});
+</script>
+
 {% endblock %}

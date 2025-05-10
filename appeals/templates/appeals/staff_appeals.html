@@ -7,6 +7,14 @@
   <div class="filter-header">
     <h2>Все обращения</h2>
     <div class="filter-controls">
+      <form class="search-form" method="GET">
+        <input type="text"
+               name="search"
+               placeholder="Поиск по названию..."
+               value="{{ search_query|default:'' }}"
+               class="search-input">
+        <button type="submit" class="btn btn-primary">Найти</button>
+      </form>
       <div class="dropdown">
         <button class="btn btn-primary">
           Фильтровать
@@ -16,9 +24,9 @@
           <a class="dropdown-item" href="?filter_type=title">По названию</a>
           <a class="dropdown-item" href="?filter_type=id">По номеру</a>
           <a class="dropdown-item" href="?filter_type=date">По дате</a>
-          {% if current_filter %}
+          {% if current_filter or search_query %}
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="?">Сбросить фильтр</a>
+            <a class="dropdown-item" href="?">Сбросить фильтры</a>
           {% endif %}
         </div>
       </div>
@@ -99,8 +107,8 @@
   {% else %}
     <div class="empty-state">
       <div class="empty-icon">📭</div>
-      <h3>{% if current_filter %}Ничего не найдено{% else %}Обращений пока нет{% endif %}</h3>
-      <p>{% if current_filter %}Попробуйте изменить параметры фильтра{% else %}Нет доступных обращений{% endif %}</p>
+      <h3>{% if search_query or current_filter %}Ничего не найдено{% else %}Обращений пока нет{% endif %}</h3>
+      <p>{% if search_query or current_filter %}Попробуйте изменить параметры поиска{% else %}Нет доступных обращений{% endif %}</p>
     </div>
   {% endif %}
 </div>
@@ -111,6 +119,48 @@
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-right: 15px;
+}
+
+.search-input {
+    padding: 8px 12px;
+    border: 2px solid #e0e6ed;
+    border-radius: 6px;
+    width: 250px;
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+}
+
+.appeals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.appeal-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0, 168, 107, 0.1);
+  transition: all 0.3s ease;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 280px;
+}
+
+.appeal-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 168, 107, 0.15);
 }
 
 .appeal-card {

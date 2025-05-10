@@ -18,6 +18,14 @@
   <div class="filter-header">
     <h2>Мои обращения</h2>
     <div class="filter-controls">
+      <form class="search-form" method="GET">
+        <input type="text"
+               name="search"
+               placeholder="Поиск по названию..."
+               value="{{ search_query|default:'' }}"
+               class="search-input">
+        <button type="submit" class="btn btn-primary">Найти</button>
+      </form>
       <div class="dropdown" onmouseover="showDropdown()" onmouseleave="hideDropdown()">
         <button class="btn btn-primary">
           Фильтровать
@@ -27,9 +35,9 @@
           <a class="dropdown-item" href="?filter_type=title">По названию</a>
           <a class="dropdown-item" href="?filter_type=id">По номеру</a>
           <a class="dropdown-item" href="?filter_type=date">По дате</a>
-          {% if current_filter %}
+          {% if current_filter or search_query %}
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="?">Сбросить фильтр</a>
+            <a class="dropdown-item" href="?">Сбросить фильтры</a>
           {% endif %}
         </div>
       </div>
@@ -71,42 +79,57 @@
     </div>
   {% else %}
     <div class="empty-state">
-      <div class="empty-icon"></div>
-      <h3>{% if current_filter %}Ничего не найдено{% else %}Обращений пока нет{% endif %}</h3>
-      <p>{% if current_filter %}Попробуйте изменить параметры фильтра{% else %}Начните с создания нового обращения{% endif %}</p>
-      <a href="{% url 'appeals:create_appeal' %}" class="btn btn-primary">
-        Создать обращение
-      </a>
+      <div class="empty-icon">📭</div>
+      <h3>
+        {% if search_query or current_filter %}
+          Ничего не найдено
+        {% else %}
+          Обращений пока нет
+        {% endif %}
+      </h3>
+      <p>
+        {% if search_query or current_filter %}
+          Попробуйте изменить параметры поиска
+        {% else %}
+          Начните с создания нового обращения
+        {% endif %}
+      </p>
+      {% if not search_query and not current_filter %}
+        <a href="{% url 'appeals:create_appeal' %}" class="btn btn-primary">
+          Создать обращение
+        </a>
+      {% endif %}
     </div>
   {% endif %}
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  const dropdowns = document.querySelectorAll('.dropdown');
+    const dropdowns = document.querySelectorAll('.dropdown');
 
-  dropdowns.forEach(dropdown => {
-    const menu = dropdown.querySelector('.dropdown-menu');
-    let timeoutId;
+    dropdowns.forEach(dropdown => {
+        const menu = dropdown.querySelector('.dropdown-menu');
+        let timeoutId;
 
-    dropdown.addEventListener('mouseenter', () => {
-      clearTimeout(timeoutId);
-      menu.style.display = 'block';
+        dropdown.addEventListener('mouseenter', () => {
+            clearTimeout(timeoutId);
+            menu.style.display = 'block';
+        });
+
+        dropdown.addEventListener('mouseleave', () => {
+            timeoutId = setTimeout(() => {
+                menu.style.display = 'none';
+            }, 300);
+        });
+
+        menu.addEventListener('mouseenter', () => clearTimeout(timeoutId));
+        menu.addEventListener('mouseleave', () => {
+            timeoutId = setTimeout(() => {
+                menu.style.display = 'none';
+            }, 300);
+        });
     });
-
-    dropdown.addEventListener('mouseleave', () => {
-      timeoutId = setTimeout(() => {
-        menu.style.display = 'none';
-      }, 300);
-    });
-
-    menu.addEventListener('mouseenter', () => clearTimeout(timeoutId));
-    menu.addEventListener('mouseleave', () => {
-      timeoutId = setTimeout(() => {
-        menu.style.display = 'none';
-      }, 300);
-    });
-  });
 });
 </script>
+
 {% endblock %}

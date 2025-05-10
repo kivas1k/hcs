@@ -1,4 +1,5 @@
 from django import forms
+from .models import Comment
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
 from django.contrib.auth.forms import UserChangeForm
@@ -82,4 +83,16 @@ class EditProfileForm(UserChangeForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'phone': PhoneInput(),
+        }
+
+class PublicCommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Оставьте ваш комментарий...'
+            })
         }
