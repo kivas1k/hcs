@@ -1,15 +1,63 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
+
+
+class CustomUserManager(BaseUserManager):
+    def create_superuser(self, username, email, password, phone, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', 'admin')
+        extra_fields.setdefault('is_active', True)
+
+        if not phone:
+            raise ValueError('Superuser must have a phone number')
+        return self._create_user(username, email, password, phone, **extra_fields)
+
+    def create_staffuser(self, username, email, password, phone, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('role', 'staff')
+        extra_fields.setdefault('is_active', True)
+
+        if not phone:
+            raise ValueError('Staff user must have a phone number')
+        return self._create_user(username, email, password, phone, **extra_fields)
+
+    def create_user(self, username, email, password, phone, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('role', 'user')
+        return self._create_user(username, email, password, phone, **extra_fields)
+
+    def _create_user(self, username, email, password, phone, **extra_fields):
+        if not email:
+            raise ValueError('Users must have an email address')
+        if not phone:
+            raise ValueError('Users must have a phone number')
+
+        email = self.normalize_email(email)
+        user = self.model(
+            username=username,
+            email=email,
+            phone=phone,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
 
 class User(AbstractUser):
     ROLES = (
-        ('user', 'Обычный пользователь'),
-        ('staff', 'Сотрудник'),
-        ('admin', 'Администратор'),
+        ('user', _('Обычный пользователь')),
+        ('staff', _('Сотрудник')),
+        ('admin', _('Администратор')),
     )
 
     role = models.CharField(
+        _('Роль'),
         max_length=20,
         choices=ROLES,
         default='user'
@@ -17,31 +65,28 @@ class User(AbstractUser):
 
     phone_regex = RegexValidator(
         regex=r'^\+7\d{10}$',
-        message="Номер телефона должен быть в формате: '+79999999999'."
+        message=_("Номер телефона должен быть в формате: '+79999999999'.")
     )
     phone = models.CharField(
+        _('Телефон'),
         max_length=12,
         validators=[phone_regex],
         unique=True
     )
 
-    first_name = models.CharField(max_length=150, blank=True, null=True)
-    last_name = models.CharField(max_length=150, blank=True, null=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(_('Email'), unique=True)
+    first_name = models.CharField(_('Имя'), max_length=150, blank=True)
+    last_name = models.CharField(_('Фамилия'), max_length=150, blank=True)
 
-    @property
-    def is_staff(self):
-        return self.role in ['staff', 'admin']
+    objects = CustomUserManager()
 
-    @property
-    def is_superuser(self):
-        return self.role == 'admin'
+    def __str__(self):
+        return self.username
 
-    def has_perm(self, perm, obj=None):
-        return self.role == 'admin'
+    class Meta:
+        verbose_name = _('Пользователь')
+        verbose_name_plural = _('Пользователи')
 
-    def has_module_perms(self, app_label):
-        return self.role == 'admin'
 
 class Comment(models.Model):
     STATUS_CHOICES = [

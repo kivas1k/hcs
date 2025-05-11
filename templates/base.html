@@ -15,7 +15,7 @@
         </div>
         <div class="nav-links">
           <a href="{% url 'home' %}">Главная</a>
-          <a href="#">FAQ</a>
+          <a href="{% url 'faq:faq' %}">FAQ</a>
           <a href="#">Контакты</a>
           {% if user.is_authenticated %}
             {% if user.role not in "staff admin" %}

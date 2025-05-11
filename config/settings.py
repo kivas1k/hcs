@@ -16,9 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'appeals.apps.AppealsConfig',
-    # 'faq.apps.FaqConfig',
-    # 'notifications.apps.NotificationsConfig',
-    # 'reports.apps.ReportsConfig',
+    'faq.apps.FaqConfig',
 ]
 
 MIDDLEWARE = [
@@ -91,9 +89,8 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Настройки для версии для слабовидящих
 ACCESSIBILITY_MODE_COOKIE_NAME = 'accessibility_mode'
-ACCESSIBILITY_MODE_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 дней
+ACCESSIBILITY_MODE_COOKIE_AGE = 30 * 24 * 60 * 60
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

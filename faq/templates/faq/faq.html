@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Часто задаваемые вопросы - ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<section class="faq-section">
+    <div class="section-header">
+        <h1>Часто задаваемые вопросы</h1>
+        {% if is_staff %}
+        <div class="actions">
+            <a href="{% url 'faq:add_category' %}" class="btn btn-primary">+ Категория</a>
+            <a href="{% url 'faq:add_question' %}" class="btn btn-primary">+ Вопрос</a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% for category in categories %}
+    <div class="faq-category">
+        <div class="category-header">
+            <h2>{{ category.name }}</h2>
+            {% if is_staff %}
+            <div class="category-actions">
+                <a href="{% url 'faq:edit_category' category.pk %}" class="btn btn-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                    </svg>
+                </a>
+                <form method="POST" action="{% url 'faq:delete_category' category.pk %}" class="delete-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-icon" onclick="return confirm('Удалить категорию?')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="faq-questions">
+            {% for question in category.questions.all %}
+            <div class="faq-item">
+                <div class="question-content">
+                    <div class="question">{{ question.question }}</div>
+                    <div class="answer">{{ question.answer|linebreaks }}</div>
+                </div>
+                {% if is_staff %}
+                <div class="question-actions">
+                    <a href="{% url 'faq:edit_question' question.pk %}" class="btn btn-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                        </svg>
+                    </a>
+                    <form method="POST" action="{% url 'faq:delete_question' question.pk %}" class="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-icon" onclick="return confirm('Удалить вопрос?')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</section>
+
+<style>
+.faq-section {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.faq-category {
+    margin-bottom: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.faq-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-left: 3px solid #00a86b;
+    background: #f8f9fa;
+}
+
+.question-content {
+    flex-grow: 1;
+}
+
+.question {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.answer {
+    color: #34495e;
+    line-height: 1.6;
+}
+
+.category-actions, .question-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    padding: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-icon:hover {
+    opacity: 0.8;
+}
+
+.delete-form {
+    display: inline;
+}
+</style>
+{% endblock %}

@@ -9,5 +9,6 @@ urlpatterns = ([
     path('', home_view, name='home'),
     path('users/', include('users.urls')),
     path('appeals/', include('appeals.urls')),
+    path('faq/', include('faq.urls')),
 ]
 + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
