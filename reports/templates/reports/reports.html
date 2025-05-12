@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="report-container">
+    <h1>Генерация отчетов</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="filters">
+            <div class="filter-group">
+                <label>Статус:</label>
+                <select name="status">
+                    <option value="">Все</option>
+                    {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if value == request.POST.status %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Приоритет:</label>
+                <select name="priority">
+                    <option value="">Все</option>
+                    {% for value, label in priority_choices %}
+                        <option value="{{ value }}" {% if value == request.POST.priority %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Тег:</label>
+                <select name="tag">
+                    <option value="">Все</option>
+                    {% for tag in tags %}
+                        <option value="{{ tag.id }}" {% if tag.id|slugify == request.POST.tag %}selected{% endif %}>{{ tag.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% if request.user.role == 'admin' %}
+                <div class="filter-group">
+                    <label>Сотрудник:</label>
+                    <select name="employee">
+                    <option value="">Все</option>
+                        {% for employee in employees %}
+                         <option value="{{ employee.id }}" {% if employee.id|slugify == request.POST.employee %}selected{% endif %}>{{ employee.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endif %}
+
+            <div class="filter-group">
+                <label>Дата начала:</label>
+                <input type="date" name="start_date" value="{{ request.POST.start_date }}">
+            </div>
+
+            <div class="filter-group">
+                <label>Дата окончания:</label>
+                <input type="date" name="end_date" value="{{ request.POST.end_date }}">
+            </div>
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" name="generate" class="btn btn-primary">Сформировать</button>
+            <button type="submit" name="export" class="btn btn-success">Экспорт в Excel</button>
+        </div>
+    </form>
+
+    {% if report_data %}
+    <div class="report-results">
+        <h2>Результаты ({{ report_data|length }} записей)</h2>
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Заголовок</th>
+                    <th>Статус</th>
+                    <th>Приоритет</th>
+                    <th>Автор</th>
+                    <th>Дата создания</th>
+                    <th>Теги</th>
+                    <th>Исполнитель</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in report_data %}
+                <tr>
+                     <td>{{ item.ID }}</td>
+                    <td>{{ item.Заголовок }}</td>
+                    <td>{{ item.Статус }}</td>
+                    <td>{{ item.Приоритет }}</td>
+                    <td>{{ item.Автор }}</td>
+                    <td>{{ item.Дата_создания }}</td>
+                    <td>{{ item.Теги }}</td>
+                    <td>{{ item.Исполнитель }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.report-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-buttons {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.report-table th,
+.report-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.report-table th {
+    background-color: #f5f5f5;
+}
+
+.report-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+</style>
+{% endblock %}

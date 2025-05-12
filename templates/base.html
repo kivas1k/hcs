@@ -18,7 +18,9 @@
           <a href="{% url 'faq:faq' %}">FAQ</a>
           <a href="#">Контакты</a>
           {% if user.is_authenticated %}
-            {% if user.role not in "staff admin" %}
+            {% if user.role in "staff admin" %}
+              <a href="{% url 'reports:reports' %}">Отчеты</a>
+            {% else %}
               <a href="{% url 'appeals:create_appeal' %}" class="btn btn-primary">Создать обращение</a>
             {% endif %}
             <a href="{% url 'users:profile' %}" class="username-link"><strong>{{ user.username }}</strong></a>

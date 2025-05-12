@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'appeals.apps.AppealsConfig',
     'faq.apps.FaqConfig',
+    'reports.apps.ReportsConfig',
 ]
 
 MIDDLEWARE = [
