@@ -37,6 +37,17 @@
                 </select>
             </div>
 
+            <div class="filter-group">
+             <label>Автор:</label>
+    <select name="author">
+        <option value="">Все</option>
+        {% for author in authors %}
+            <option value="{{ author.id }}" {% if author.id|slugify == request.POST.author %}selected{% endif %}>{{ author.username }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+
             {% if request.user.role == 'admin' %}
                 <div class="filter-group">
                     <label>Сотрудник:</label>

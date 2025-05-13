@@ -37,6 +37,7 @@ class ReportsView(UserPassesTestMixin, View):
             'priority_choices': Appeal.PRIORITY_CHOICES,
             'employees': User.objects.filter(role__in=['staff', 'admin']),
             'tags': Tag.objects.all(),
+            'authors': User.objects.filter(appeals__isnull=False).distinct(),
         }
 
     def get_filter_params(self, request):
@@ -45,6 +46,7 @@ class ReportsView(UserPassesTestMixin, View):
             'priority': request.POST.get('priority'),
             'tag': request.POST.get('tag'),
             'employee': request.POST.get('employee'),
+            'author': request.POST.get('author'),
             'start_date': request.POST.get('start_date'),
             'end_date': request.POST.get('end_date'),
         }
@@ -56,6 +58,8 @@ class ReportsView(UserPassesTestMixin, View):
             queryset = queryset.filter(priority=params['priority'])
         if params['tag']:
             queryset = queryset.filter(tags__id=params['tag'])
+        if params['author']:
+            queryset = queryset.filter(author_id=params['author'])
         if params['employee'] and self.request.user.role == 'admin':
             queryset = queryset.filter(taken_by_id=params['employee'])
         if params['start_date'] and params['end_date']:
