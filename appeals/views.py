@@ -8,7 +8,7 @@ import os
 from django.conf import settings
 from io import BytesIO
 from .models import Appeal, AppealDocument, Comment
-from .forms import AppealForm, DocumentForm, StaffAppealForm, CommentForm, FeedbackForm
+from .forms import AppealForm, DocumentForm, StaffAppealForm, CommentForm, FeedbackForm, EmployeeStatus
 
 
 def staff_required(view_func=None):
@@ -106,7 +106,7 @@ def appeal_detail(request, appeal_id):
                 return HttpResponseForbidden("У вас нет прав оставлять комментарии")
 
         elif 'rating' in request.POST:
-            if appeal.status == 'completed' and request.user == appeal.author and not appeal.rating:
+            if appeal.status.code == 'completed' and request.user == appeal.author and not appeal.rating:
                 feedback_form = FeedbackForm(request.POST, instance=appeal)
                 if feedback_form.is_valid():
                     feedback_form.save()
@@ -290,15 +290,18 @@ def staff_change_status(request, appeal_id, new_status):
 
     if request.method == 'POST':
         if new_status == 'in_progress':
-            appeal.employee_status = 'in_progress'
+            status = EmployeeStatus.objects.get(code='in_progress')
+            appeal.employee_status = status
             appeal.taken_by = user
             appeal.taken_at = timezone.now()
         elif new_status == 'closed':
-            appeal.employee_status = 'closed'
+            status = EmployeeStatus.objects.get(code='closed')
+            appeal.employee_status = status
             appeal.closed_by = user
             appeal.closed_at = timezone.now()
         else:
-            appeal.employee_status = 'free'
+            status = EmployeeStatus.objects.get(code='free')
+            appeal.employee_status = status
             appeal.taken_by = None
             appeal.taken_at = None
 

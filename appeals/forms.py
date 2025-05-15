@@ -1,6 +1,5 @@
 from django import forms
-from .models import Appeal, Tag, Comment
-
+from .models import Appeal, Tag, Comment, AppealStatus, Priority, EmployeeStatus
 
 class FeedbackForm(forms.ModelForm):
     RATING_CHOICES = [(i, '★' * i) for i in range(1, 6)]
@@ -20,7 +19,6 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Appeal
         fields = ['rating', 'feedback_comment']
-
 
 class AppealForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(
@@ -57,19 +55,33 @@ class AppealForm(forms.ModelForm):
             }),
         }
 
-
 class StaffAppealForm(forms.ModelForm):
+    status = forms.ModelChoiceField(
+        queryset=AppealStatus.objects.all(),
+        label='Статус',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    priority = forms.ModelChoiceField(
+        queryset=Priority.objects.all(),
+        label='Приоритет',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'tags-checkbox'}),
         required=False,
         label='Теги'
     )
+    employee_status = forms.ModelChoiceField(
+        queryset=EmployeeStatus.objects.all(),
+        label='Статус для сотрудников',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
 
     class Meta:
         model = Appeal
-        fields = ['tags']
-
+        fields = ['status', 'priority', 'tags', 'employee_status']
 
 class DocumentForm(forms.Form):
     files = forms.FileField(
@@ -77,7 +89,6 @@ class DocumentForm(forms.Form):
         label='Прикрепите документы',
         required=False
     )
-
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -91,42 +102,10 @@ class CommentForm(forms.ModelForm):
             })
         }
 
-
-class StaffAppealForm(forms.ModelForm):
-    status = forms.ChoiceField(
-        label='Статус',
-        choices=Appeal.STATUS_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    priority = forms.ChoiceField(
-        label='Приоритет',
-        choices=Appeal.PRIORITY_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        widget=forms.CheckboxSelectMultiple(attrs={'class': 'tags-checkbox'}),
-        required=False,
-        label='Теги'
-    )
-    employee_status = forms.ChoiceField(
-        label='Статус для сотрудников',
-        choices=Appeal.EMPLOYEE_STATUS_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=False
-    )
-
+class ChangeEmployeeStatusForm(forms.ModelForm):
     class Meta:
         model = Appeal
-        fields = ['status', 'priority', 'tags', 'employee_status']
-
-
-class ChangeEmployeeStatusForm(forms.Form):
-    status = forms.ChoiceField(
-        choices=Appeal.EMPLOYEE_STATUS_CHOICES,
-        widget=forms.HiddenInput()
-    )
-
-    class Meta:
-        model = Appeal
-        fields = ['status', 'priority', 'tags']
+        fields = ['employee_status']
+        widgets = {
+            'employee_status': forms.HiddenInput()
+        }

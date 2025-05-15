@@ -20,7 +20,7 @@
 
   <div class="appeal-header">
     <h2>Обращение #{{ appeal.id }}</h2>
-    <span class="status-badge {{ appeal.status }}">{{ appeal.get_status_display }}</span>
+    <span class="status-badge {{ appeal.status.code }}">{{ appeal.status.name }}</span>
   </div>
 
   <div class="appeal-details">
@@ -33,7 +33,7 @@
         </div>
         <div class="info-item">
           <span class="info-label">Приоритет:</span>
-          <span class="info-value">{{ appeal.get_priority_display }}</span>
+          <span class="info-value">{{ appeal.priority.name }}</span>
         </div>
       </div>
     </div>
@@ -184,7 +184,7 @@
       {% endif %}
     </div>
 
-    {% if appeal.status == 'completed' %}
+    {% if appeal.status.code == 'completed' %}
     <div class="feedback-section">
       <h3>⭐ Оценка работы сотрудника</h3>
       {% if show_feedback_form %}

@@ -12,29 +12,45 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+class AppealStatus(models.Model):
+    name = models.CharField('Название', max_length=50, unique=True)
+    code = models.CharField('Код', max_length=20, unique=True)
+
+    class Meta:
+        verbose_name = 'Статус обращения'
+        verbose_name_plural = 'Статусы обращений'
+
+    def __str__(self):
+        return self.name
+
+class Priority(models.Model):
+    name = models.CharField('Название', max_length=50, unique=True)
+    code = models.CharField('Код', max_length=20, unique=True)
+
+    class Meta:
+        verbose_name = 'Приоритет'
+        verbose_name_plural = 'Приоритеты'
+
+    def __str__(self):
+        return self.name
+
+class EmployeeStatus(models.Model):
+    name = models.CharField('Название', max_length=50, unique=True)
+    code = models.CharField('Код', max_length=20, unique=True)
+
+    class Meta:
+        verbose_name = 'Статус сотрудника'
+        verbose_name_plural = 'Статусы сотрудников'
+
+    def __str__(self):
+        return self.name
+
 class Appeal(models.Model):
-    STATUS_CHOICES = [
-        ('new', 'Новое'),
-        ('in_progress', 'В работе'),
-        ('completed', 'Завершено'),
-    ]
-
-    PRIORITY_CHOICES = [
-        ('low', 'Низкий'),
-        ('medium', 'Средний'),
-        ('high', 'Высокий'),
-    ]
-
-    EMPLOYEE_STATUS_CHOICES = [
-        ('free', 'Свободное'),
-        ('in_progress', 'В работе'),
-        ('closed', 'Закрыто'),
-    ]
-
-    employee_status = models.CharField(
-        max_length=20,
-        choices=EMPLOYEE_STATUS_CHOICES,
-        default='free',
+    employee_status = models.ForeignKey(
+        EmployeeStatus,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name='Статус для сотрудников'
     )
     taken_by = models.ForeignKey(
@@ -66,8 +82,20 @@ class Appeal(models.Model):
     description = models.TextField('Описание')
     address = models.CharField('Адрес проживания', max_length=200, blank=True)
     full_name = models.CharField('ФИО', max_length=150, blank=True)
-    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='new')
-    priority = models.CharField('Приоритет', max_length=20, choices=PRIORITY_CHOICES, default='medium')
+    status = models.ForeignKey(
+        AppealStatus,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Статус'
+    )
+    priority = models.ForeignKey(
+        Priority,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Приоритет'
+    )
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appeals')
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
@@ -75,6 +103,18 @@ class Appeal(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def status_code(self):
+        return self.status.code if self.status else None
+
+    @property
+    def priority_code(self):
+        return self.priority.code if self.priority else None
+
+    @property
+    def employee_status_code(self):
+        return self.employee_status.code if self.employee_status else None
 
 class AppealDocument(models.Model):
     appeal = models.ForeignKey(Appeal, on_delete=models.CASCADE, related_name='documents')

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block title %}Обращения — ЖКХ Сервис{% endblock %}
 
 {% block content %}
@@ -66,15 +67,15 @@
           <a href="{% url 'appeals:appeal_detail' appeal.id %}" class="card-content">
             <div class="card-header">
               <h3 class="card-title">{{ appeal.title|default:"Без названия"|truncatechars:40 }}</h3>
-              <span class="status-badge {{ appeal.status|default:'new' }}">
-                {{ appeal.get_status_display|default:"Новое" }}
+              <span class="status-badge {{ appeal.status.code|default:'new' }}">
+                {{ appeal.status.name|default:"Новое" }}
               </span>
             </div>
 
             <div class="card-meta">
               <div class="meta-item">
                 <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                Приоритет: {{ appeal.get_priority_display|default:"Не указан" }}
+                Приоритет: {{ appeal.priority.name|default:"Не указан" }}
               </div>
               <div class="meta-item">
                 <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8m-1-13h2v6h-2V7m0 8h2v2h-2v-2"/></svg>
@@ -90,11 +91,11 @@
               {% endfor %}
 
               <div class="employee-status">
-                <span class="status-tag {{ appeal.employee_status }}">
-                  {{ appeal.get_employee_status_display }}
-                  {% if appeal.employee_status == 'in_progress' and appeal.taken_by %}
+                <span class="status-tag {{ appeal.employee_status.code }}">
+                  {{ appeal.employee_status.name }}
+                  {% if appeal.employee_status.code == 'in_progress' and appeal.taken_by %}
                     ({{ appeal.taken_by.username }})
-                  {% elif appeal.employee_status == 'closed' and appeal.closed_by %}
+                  {% elif appeal.employee_status.code == 'closed' and appeal.closed_by %}
                     ({{ appeal.closed_by.username }})
                   {% endif %}
                 </span>

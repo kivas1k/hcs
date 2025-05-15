@@ -50,7 +50,7 @@
         <a href="{% url 'appeals:appeal_detail' appeal.id %}" class="appeal-cube">
           <div class="cube-header">
             <h3 class="cube-title">{{ appeal.title|truncatechars:40 }}</h3>
-            <span class="cube-status {{ appeal.status }}">{{ appeal.get_status_display }}</span>
+            <span class="cube-status {{ appeal.status.code }}">{{ appeal.status.name }}</span>
           </div>
 
           <div class="cube-meta">
@@ -58,7 +58,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5"/>
               </svg>
-              Приоритет: {{ appeal.get_priority_display }}
+              Приоритет: {{ appeal.priority.name }}
             </div>
           </div>
 
