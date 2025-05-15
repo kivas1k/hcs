@@ -8,6 +8,103 @@
   --staff-bg: #f0f4f8;
   --user-bg: #e3f2fd;
   --border-color: #e0e6ed;
+  --gradient-1: rgba(0, 168, 107, 0.08);
+  --gradient-2: rgba(76, 175, 80, 0.06);
+  --gradient-3: rgba(33, 150, 243, 0.05);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+@keyframes wave-move {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(-50%) translateY(-20px); }
+}
+
+@keyframes wave-scale {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.2); }
+}
+
+.decorative-circle {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(0,168,107,0.08) 0%,
+    rgba(76,175,80,0.06) 30%,
+    transparent 70%);
+  filter: blur(30px);
+  z-index: -1;
+  pointer-events: none;
+  animation: float 12s ease-in-out infinite;
+}
+
+.circle-1 {
+  top: 20%;
+  right: -200px;
+}
+
+.circle-2 {
+  bottom: -200px;
+  left: 10%;
+  background: radial-gradient(circle,
+    rgba(76,175,80,0.06) 0%,
+    rgba(33,150,243,0.05) 30%,
+    transparent 70%);
+  animation-delay: 2s;
+}
+
+.circle-3 {
+  top: 50%;
+  left: -300px;
+  background: radial-gradient(circle,
+    rgba(33,150,243,0.05) 0%,
+    rgba(0,168,107,0.08) 30%,
+    transparent 70%);
+  animation-delay: 4s;
+}
+
+.decorative-circle.top-right {
+  top: -300px;
+  right: -300px;
+}
+
+.decorative-circle.bottom-left {
+  bottom: -300px;
+  left: -300px;
+  animation-delay: 2s;
+}
+
+.card-style,
+.appeal-cube,
+.comment {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+.card-style::before,
+.appeal-cube::before,
+.comment::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg,
+    transparent 48%,
+    rgba(0, 168, 107, 0.05) 50%,
+    transparent 52%);
+  animation: flow 6s linear infinite;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 * {
@@ -1033,31 +1130,31 @@ body {
 }
 
 .form-actions .btn {
-  flex: 1 1 auto; /* Равная ширина кнопок */
-  text-align: center; /* Центрирование текста */
-  padding: 0.8rem 1.5rem; /* Единый отступ */
+  flex: 1 1 auto;
+  text-align: center;
+  padding: 0.8rem 1.5rem;
 }
 
 .btn-outline {
-  border: 2px solid var(--primary); /* Использование переменной */
-  color: var(--primary); /* Единый цвет текста */
-  margin-left: 0; /* Убрать отступ */
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  margin-left: 0;
 }
 
 @media (max-width: 480px) {
   .form-actions .btn {
     width: 100%;
-    flex: none; /* Отмена гибкого растяжения */
+    flex: none;
   }
 }
 
 .form-actions {
   display: flex;
-  justify-content: center; /* Основное центрирование */
+  justify-content: center;
   gap: 2rem;
   margin-top: 2rem;
   flex-wrap: wrap;
-  position: relative; /* Для абсолютного позиционирования при необходимости */
+  position: relative;
 }
 
 .btn {
@@ -1065,15 +1162,13 @@ body {
   text-align: center;
 }
 
-/* Конкретно для кнопки сохранения */
 .auth-form button[type="submit"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto; /* Центрирование кнопки в контейнере */
+  margin: 0 auto;
 }
 
-/* ================== Фильтры и сортировка ================== */
 .filter-header {
   display: flex;
   justify-content: space-between;
@@ -1269,4 +1364,204 @@ body {
     width: 100%;
     margin-bottom: 10px;
     resize: vertical;
+}
+
+
+/* Анимация фона */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes wave {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(25%) translateY(20px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes floating-waves {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background:
+    linear-gradient(45deg, var(--gradient-1) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--gradient-2) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--gradient-3) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--gradient-2) 75%);
+  background-size: 100px 100px;
+  opacity: 0.1;
+  z-index: -2;
+  animation: wave 20s linear infinite;
+}
+
+.waves-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.wave {
+  position: absolute;
+  width: 200%;
+  height: 15vh;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 45%;
+  animation: wave-move 15s linear infinite, wave-scale 8s ease-in-out infinite;
+  opacity: 0.15;
+}
+
+.wave-1 {
+  top: 20%;
+  left: 0;
+  background: rgba(0, 168, 107, 0.1);
+  animation-delay: 0s;
+}
+
+.wave-2 {
+  top: 50%;
+  left: -10%;
+  background: rgba(76, 175, 80, 0.08);
+  animation-delay: 2s;
+  animation-duration: 12s;
+}
+
+.wave-3 {
+  top: 70%;
+  left: -20%;
+  background: rgba(33, 150, 243, 0.05);
+  animation-delay: 4s;
+  animation-duration: 18s;
+}
+
+.wave:nth-child(1) {
+  top: 20%;
+  left: -50%;
+  border-radius: 45%;
+  animation-delay: 0s;
+}
+
+.wave:nth-child(2) {
+  top: 50%;
+  left: -30%;
+  border-radius: 40%;
+  animation-delay: 2s;
+}
+
+.wave:nth-child(3) {
+  top: 70%;
+  left: -70%;
+  border-radius: 50%;
+  animation-delay: 4s;
+}
+
+
+
+.decorative-circle.top-right {
+  top: -300px;
+  right: -300px;
+}
+
+.decorative-circle.bottom-left {
+  bottom: -300px;
+  left: -300px;
+  animation-delay: 2s;
+}
+
+/* Улучшенные карточки */
+.appeal-cube {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+.appeal-cube::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg,
+    transparent 48%,
+    rgba(0, 168, 107, 0.05) 50%,
+    transparent 52%);
+  animation: flow 6s linear infinite;
+  opacity: 0.3;
+}
+
+@keyframes flow {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Улучшенный поиск */
+.search-input {
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.search-input:focus {
+  box-shadow: 0 4px 25px rgba(0, 168, 107, 0.15);
+}
+
+/* Анимированные тэги */
+.tag-pill {
+  position: relative;
+  overflow: hidden;
+}
+
+.tag-pill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent);
+  transition: 0.5s;
+}
+
+.tag-pill:hover::before {
+  left: 100%;
+}
+
+/* Улучшенный дропдаун */
+.dropdown-menu {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 168, 107, 0.1);
+}
+
+/* Эффект параллакса */
+.appeals-grid {
+  perspective: 1000px;
+}
+
+.appeal-cube {
+  transform-style: preserve-3d;
+}
+
+.appeal-cube:hover {
+  transform: translateY(-5px) rotateX(2deg) rotateY(1deg);
 }
