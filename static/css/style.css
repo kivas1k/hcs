@@ -1565,3 +1565,180 @@ body::after {
 .appeal-cube:hover {
   transform: translateY(-5px) rotateX(2deg) rotateY(1deg);
 }
+
+.btn-notifications {
+    position: relative;
+    background: none !important;
+    border: none;
+    color: white !important;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-left: 1rem;
+    padding: 0.6rem 1.2rem;
+    line-height: 1.5;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.btn-notifications.has-notifications {
+    color: #ffcc00 !important;
+}
+
+.notifications-menu {
+    width: 350px;
+    max-height: 500px;
+    overflow-y: auto;
+    right: 0;
+    left: auto;
+    padding: 0;
+}
+
+.notifications-header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notifications-header h4 {
+    margin: 0;
+}
+
+.notifications-list {
+    padding: 0;
+}
+
+.notification-item {
+    display: flex;
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.notification-item.unread {
+    background-color: #f8f9fa;
+}
+
+.notification-item:hover {
+    background-color: #f1f1f1;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-content p {
+    margin: 0 0 0.5rem 0;
+}
+
+.notification-content small {
+    color: #666;
+}
+
+.mark-as-read {
+    background: none;
+    border: none;
+    color: #00a86b;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.mark-all-read {
+    color: #00a86b;
+    font-size: 0.9rem;
+}
+
+.no-notifications {
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+}
+
+.notifications-footer {
+    padding: 0.5rem;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+
+.notifications-footer a {
+    color: #00a86b;
+    font-size: 0.9rem;
+}
+
+.navbar {
+    color: white;
+}
+
+.dropdown-menu.notifications-menu {
+    color: #333;
+}
+
+.notification-icon {
+    filter: brightness(0) invert(1);
+}
+
+.notification-item {
+    color: #333;
+    padding: 10px;
+    margin: 5px 0;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.mark-all-read {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #00a86b;
+    color: white !important;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+}
+
+.mark-all-read:hover {
+    background-color: #008f5a;
+    transform: translateY(-1px);
+}
+
+.mark-as-read-btn {
+    background: #00a86b;
+    color: white !important;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    margin-left: 1rem;
+    white-space: nowrap;
+}
+
+.mark-as-read-btn:hover {
+    background: #008f5a;
+    transform: translateY(-1px);
+}

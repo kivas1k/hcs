@@ -1,5 +1,7 @@
 from django.db import models
 from users.models import User
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 
 class Tag(models.Model):
     name = models.CharField('Название', max_length=50, unique=True)
@@ -101,8 +103,29 @@ class Appeal(models.Model):
     updated_at = models.DateTimeField('Дата обновления', auto_now=True)
     tags = models.ManyToManyField(Tag, verbose_name='Теги', blank=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._original_status = self.status
+        self._original_priority = self.priority
+
+    @classmethod
+    def get_default_employee_status(cls):
+        status, _ = EmployeeStatus.objects.get_or_create(
+            code='free',
+            defaults={'name': 'Свободно'}
+        )
+        return status
+
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.employee_status_id:
+            self.employee_status = self.get_default_employee_status()
+        super().save(*args, **kwargs)
+        self._original_status = self.status
+        self._original_priority = self.priority
+        self._original_tags = set(self.tags.all())
 
     @property
     def status_code(self):

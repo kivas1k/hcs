@@ -8,24 +8,24 @@
         {% csrf_token %}
         <div class="filters">
             <div class="filter-group">
-                <label>Статус:</label>
-                <select name="status">
-                    <option value="">Все</option>
-                    {% for value, label in status_choices %}
-                        <option value="{{ value }}" {% if value == request.POST.status %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+    <label>Статус:</label>
+    <select name="status">
+        <option value="">Все</option>
+        {% for status in statuses %}
+            <option value="{{ status.id }}" {% if status.id|slugify == request.POST.status %}selected{% endif %}>{{ status.name }}</option>
+        {% endfor %}
+    </select>
+</div>
 
-            <div class="filter-group">
-                <label>Приоритет:</label>
-                <select name="priority">
-                    <option value="">Все</option>
-                    {% for value, label in priority_choices %}
-                        <option value="{{ value }}" {% if value == request.POST.priority %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+<div class="filter-group">
+    <label>Приоритет:</label>
+    <select name="priority">
+        <option value="">Все</option>
+        {% for priority in priorities %}
+            <option value="{{ priority.id }}" {% if priority.id|slugify == request.POST.priority %}selected{% endif %}>{{ priority.name }}</option>
+        {% endfor %}
+    </select>
+</div>
 
             <div class="filter-group">
                 <label>Тег:</label>

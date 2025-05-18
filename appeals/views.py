@@ -7,9 +7,8 @@ import zipfile
 import os
 from django.conf import settings
 from io import BytesIO
-from .models import Appeal, AppealDocument, Comment
-from .forms import AppealForm, DocumentForm, StaffAppealForm, CommentForm, FeedbackForm, EmployeeStatus
-
+from .models import Appeal, AppealDocument, Comment, AppealStatus, EmployeeStatus
+from .forms import AppealForm, DocumentForm, StaffAppealForm, CommentForm, FeedbackForm
 
 def staff_required(view_func=None):
     def check_staff(user):
@@ -31,9 +30,18 @@ def create_appeal(request):
         if form.is_valid():
             appeal = form.save(commit=False)
             appeal.author = request.user
+
+            if not appeal.status:
+                status, _ = AppealStatus.objects.get_or_create(
+                    code='new',
+                    defaults={'name': 'Новое'}
+                )
+                appeal.status = status
+
             appeal.save()
             form.save_m2m()
 
+            # Обработка файлов
             files = request.FILES.getlist('files')
             for f in files:
                 AppealDocument.objects.create(appeal=appeal, file=f)

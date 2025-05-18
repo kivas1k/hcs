@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.utils import timezone
-from appeals.models import Appeal, Tag
+from appeals.models import Appeal, Tag, AppealStatus, Priority
 from users.models import User
 import pandas as pd
 from io import BytesIO
@@ -33,8 +33,8 @@ class ReportsView(UserPassesTestMixin, View):
 
     def get_base_context(self):
         return {
-            'status_choices': Appeal.STATUS_CHOICES,
-            'priority_choices': Appeal.PRIORITY_CHOICES,
+            'statuses': AppealStatus.objects.all(),
+            'priorities': Priority.objects.all(),
             'employees': User.objects.filter(role__in=['staff', 'admin']),
             'tags': Tag.objects.all(),
             'authors': User.objects.filter(appeals__isnull=False).distinct(),
@@ -53,9 +53,9 @@ class ReportsView(UserPassesTestMixin, View):
 
     def apply_filters(self, queryset, params):
         if params['status']:
-            queryset = queryset.filter(status=params['status'])
+            queryset = queryset.filter(status_id=params['status'])
         if params['priority']:
-            queryset = queryset.filter(priority=params['priority'])
+            queryset = queryset.filter(priority_id=params['priority'])
         if params['tag']:
             queryset = queryset.filter(tags__id=params['tag'])
         if params['author']:
@@ -77,8 +77,8 @@ class ReportsView(UserPassesTestMixin, View):
         return [{
             'ID': appeal.id,
             'Заголовок': appeal.title,
-            'Статус': appeal.get_status_display(),
-            'Приоритет': appeal.get_priority_display(),
+            'Статус': appeal.status.name if appeal.status else '-',
+            'Приоритет': appeal.priority.name if appeal.priority else '-',
             'Автор': appeal.author.username,
             'Дата_создания': appeal.created_at.strftime('%d.%m.%Y %H:%M'),
             'Теги': ', '.join([tag.name for tag in appeal.tags.all()]),
@@ -86,7 +86,6 @@ class ReportsView(UserPassesTestMixin, View):
         } for appeal in queryset]
 
     def export_to_excel(self, queryset):
-        # Подготовка данных
         data = self.prepare_report_data(queryset)
         columns = {
             'ID': 'ID',

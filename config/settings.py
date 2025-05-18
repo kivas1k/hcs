@@ -18,7 +18,23 @@ INSTALLED_APPS = [
     'appeals.apps.AppealsConfig',
     'faq.apps.FaqConfig',
     'reports.apps.ReportsConfig',
+    'notifications.apps.NotificationsConfig',
+
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -55,6 +55,9 @@ class AppealForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
 class StaffAppealForm(forms.ModelForm):
     status = forms.ModelChoiceField(
         queryset=AppealStatus.objects.all(),

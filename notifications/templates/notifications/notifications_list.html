@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Уведомления — ЖКХ Сервис{% endblock %}
+
+{% block content %}
+<div class="auth-form notifications-page">
+    <div class="notifications-header">
+        <h2>Ваши уведомления</h2>
+        <a href="#" class="mark-all-read" onclick="markAllAsRead(event)">
+            Отметить все как прочитанные
+        </a>
+    </div>
+
+    <div class="notifications-list">
+        {% for notification in notifications %}
+        <div class="notification-item {% if not notification.is_read %}unread{% endif %}"
+             data-notification-id="{{ notification.id }}">
+            <div class="notification-content">
+                <p>{{ notification.message }}</p>
+                <small>{{ notification.created_at|date:"d.m.Y H:i" }}</small>
+            </div>
+            <button class="mark-as-read-btn" onclick="markAsRead(event, {{ notification.id }})">
+                ✓ Прочитать
+            </button>
+        </div>
+        {% empty %}
+        <div class="no-notifications">
+            <p>Нет новых уведомлений</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+// Упрощенный JavaScript только для страницы уведомлений
+async function markAsRead(event, notificationId) {
+    event.preventDefault();
+    const item = event.target.closest('.notification-item');
+
+    const response = await fetch(`/notifications/${notificationId}/read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    });
+
+    if (response.ok) item.remove();
+}
+
+async function markAllAsRead(event) {
+    event.preventDefault();
+
+    const response = await fetch('/notifications/read-all/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    });
+
+    if (response.ok) document.querySelectorAll('.notification-item').forEach(i => i.remove());
+}
+</script>
+{% endblock %}
