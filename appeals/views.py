@@ -114,17 +114,20 @@ def appeal_detail(request, appeal_id):
                 return HttpResponseForbidden("У вас нет прав оставлять комментарии")
 
         elif 'rating' in request.POST:
+            # Исправленная проверка статуса
             if appeal.status.code == 'completed' and request.user == appeal.author and not appeal.rating:
                 feedback_form = FeedbackForm(request.POST, instance=appeal)
                 if feedback_form.is_valid():
-                    feedback_form.save()
+                    feedback = feedback_form.save(commit=False)
+                    feedback.save()
                     messages.success(request, 'Спасибо за вашу оценку!')
                     return redirect('appeals:appeal_detail', appeal_id=appeal_id)
 
     if request.user.is_authenticated and (request.user == appeal.author or request.user.is_staff):
         comment_form = CommentForm()
 
-    if appeal.status == 'completed' and request.user == appeal.author and not appeal.rating:
+    # Исправленная проверка статуса
+    if appeal.status.code == 'completed' and request.user == appeal.author and not appeal.rating:
         feedback_form = FeedbackForm(instance=appeal)
         show_feedback_form = True
 
