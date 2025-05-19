@@ -8,8 +8,8 @@
         <h1>Часто задаваемые вопросы</h1>
         {% if is_staff %}
         <div class="actions">
-            <a href="{% url 'faq:add_category' %}" class="btn btn-primary">+ Категория</a>
-            <a href="{% url 'faq:add_question' %}" class="btn btn-primary">+ Вопрос</a>
+            <a href="{% url 'faq:create_category' %}" class="btn btn-primary">+ Категория</a>
+            <a href="{% url 'faq:create_question' %}" class="btn btn-primary">+ Вопрос</a>
         </div>
         {% endif %}
     </div>
@@ -20,7 +20,7 @@
             <h2>{{ category.name }}</h2>
             {% if is_staff %}
             <div class="category-actions">
-                <a href="{% url 'faq:edit_category' category.pk %}" class="btn btn-icon">
+                <a href="{% url 'faq:update_category' category.pk %}" class="btn btn-icon">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                     </svg>
@@ -46,7 +46,7 @@
                 </div>
                 {% if is_staff %}
                 <div class="question-actions">
-                    <a href="{% url 'faq:edit_question' question.pk %}" class="btn btn-icon">
+                    <a href="{% url 'faq:update_question' question.pk %}" class="btn btn-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                         </svg>

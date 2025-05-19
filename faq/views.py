@@ -12,16 +12,24 @@ def faq_view(request):
     categories = FAQCategory.objects.prefetch_related('questions').all()
     return render(request, 'faq/faq.html', {
         'categories': categories,
-        'is_staff': request.user.is_authenticated and request.user.is_staff
+        'is_staff': request.user.is_authenticated and request.user.role in ['staff', 'admin']
     })
 
+# Категории
 @staff_required
-def edit_category(request, pk=None):
-    if pk:
-        category = get_object_or_404(FAQCategory, pk=pk)
+def create_category(request):
+    if request.method == 'POST':
+        form = FAQCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('faq:faq')
     else:
-        category = None
+        form = FAQCategoryForm()
+    return render(request, 'faq/edit_category.html', {'form': form})
 
+@staff_required
+def update_category(request, pk):
+    category = get_object_or_404(FAQCategory, pk=pk)
     if request.method == 'POST':
         form = FAQCategoryForm(request.POST, instance=category)
         if form.is_valid():
@@ -29,34 +37,39 @@ def edit_category(request, pk=None):
             return redirect('faq:faq')
     else:
         form = FAQCategoryForm(instance=category)
-
     return render(request, 'faq/edit_category.html', {'form': form})
-
-@staff_required
-def edit_question(request, pk=None):
-    if pk:
-        question = get_object_or_404(FAQItem, pk=pk)
-    else:
-        question = None
-
-    if request.method == 'POST':
-        form = FAQItemForm(request.POST, instance=question)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            if not instance.created_by:
-                instance.created_by = request.user
-            instance.save()
-            return redirect('faq:faq')
-    else:
-        form = FAQItemForm(instance=question)
-
-    return render(request, 'faq/edit_question.html', {'form': form})
 
 @staff_required
 def delete_category(request, pk):
     category = get_object_or_404(FAQCategory, pk=pk)
     category.delete()
     return redirect('faq:faq')
+
+# Вопросы
+@staff_required
+def create_question(request):
+    if request.method == 'POST':
+        form = FAQItemForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.created_by = request.user
+            instance.save()
+            return redirect('faq:faq')
+    else:
+        form = FAQItemForm()
+    return render(request, 'faq/edit_question.html', {'form': form})
+
+@staff_required
+def update_question(request, pk):
+    question = get_object_or_404(FAQItem, pk=pk)
+    if request.method == 'POST':
+        form = FAQItemForm(request.POST, instance=question)
+        if form.is_valid():
+            form.save()
+            return redirect('faq:faq')
+    else:
+        form = FAQItemForm(instance=question)
+    return render(request, 'faq/edit_question.html', {'form': form})
 
 @staff_required
 def delete_question(request, pk):
