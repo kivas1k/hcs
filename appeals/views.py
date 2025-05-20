@@ -114,7 +114,6 @@ def appeal_detail(request, appeal_id):
                 return HttpResponseForbidden("У вас нет прав оставлять комментарии")
 
         elif 'rating' in request.POST:
-            # Исправленная проверка статуса
             if appeal.status.code == 'completed' and request.user == appeal.author and not appeal.rating:
                 feedback_form = FeedbackForm(request.POST, instance=appeal)
                 if feedback_form.is_valid():
@@ -125,8 +124,6 @@ def appeal_detail(request, appeal_id):
 
     if request.user.is_authenticated and (request.user == appeal.author or request.user.is_staff):
         comment_form = CommentForm()
-
-    # Исправленная проверка статуса
     if appeal.status.code == 'completed' and request.user == appeal.author and not appeal.rating:
         feedback_form = FeedbackForm(instance=appeal)
         show_feedback_form = True
@@ -280,9 +277,6 @@ def staff_edit_appeal(request, appeal_id):
     if request.method == 'POST':
         form = StaffAppealForm(request.POST, instance=appeal)
         if form.is_valid():
-            if form.cleaned_data['employee_status'] == 'closed' and not appeal.closed_by:
-                appeal.closed_by = request.user
-                appeal.closed_at = timezone.now()
             form.save()
             messages.success(request, 'Изменения сохранены')
             return redirect('appeals:staff_appeals')

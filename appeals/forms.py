@@ -75,16 +75,10 @@ class StaffAppealForm(forms.ModelForm):
         required=False,
         label='Теги'
     )
-    employee_status = forms.ModelChoiceField(
-        queryset=EmployeeStatus.objects.all(),
-        label='Статус для сотрудников',
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        required=False
-    )
 
     class Meta:
         model = Appeal
-        fields = ['status', 'priority', 'tags', 'employee_status']
+        fields = ['status', 'priority', 'tags']
 
 class DocumentForm(forms.Form):
     files = forms.FileField(

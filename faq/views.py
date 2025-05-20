@@ -3,20 +3,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import FAQCategory, FAQItem
 from .forms import FAQCategoryForm, FAQItemForm
 
-def staff_required(view_func):
-    def check_staff(user):
-        return user.is_authenticated and user.role in ['staff', 'admin']
-    return user_passes_test(check_staff)(view_func)
+def admin_required(view_func):
+    def check_admin(user):
+        return user.is_authenticated and user.role == 'admin'
+    return user_passes_test(check_admin)(view_func)
 
 def faq_view(request):
     categories = FAQCategory.objects.prefetch_related('questions').all()
     return render(request, 'faq/faq.html', {
         'categories': categories,
-        'is_staff': request.user.is_authenticated and request.user.role in ['staff', 'admin']
+        'is_admin': request.user.is_authenticated and request.user.role == 'admin'
     })
 
-# Категории
-@staff_required
+@admin_required
 def create_category(request):
     if request.method == 'POST':
         form = FAQCategoryForm(request.POST)
@@ -27,7 +26,7 @@ def create_category(request):
         form = FAQCategoryForm()
     return render(request, 'faq/edit_category.html', {'form': form})
 
-@staff_required
+@admin_required
 def update_category(request, pk):
     category = get_object_or_404(FAQCategory, pk=pk)
     if request.method == 'POST':
@@ -39,27 +38,24 @@ def update_category(request, pk):
         form = FAQCategoryForm(instance=category)
     return render(request, 'faq/edit_category.html', {'form': form})
 
-@staff_required
+@admin_required
 def delete_category(request, pk):
     category = get_object_or_404(FAQCategory, pk=pk)
     category.delete()
     return redirect('faq:faq')
 
-# Вопросы
-@staff_required
+@admin_required
 def create_question(request):
     if request.method == 'POST':
         form = FAQItemForm(request.POST)
         if form.is_valid():
-            instance = form.save(commit=False)
-            instance.created_by = request.user
-            instance.save()
+            form.save()
             return redirect('faq:faq')
     else:
         form = FAQItemForm()
     return render(request, 'faq/edit_question.html', {'form': form})
 
-@staff_required
+@admin_required
 def update_question(request, pk):
     question = get_object_or_404(FAQItem, pk=pk)
     if request.method == 'POST':
@@ -71,7 +67,7 @@ def update_question(request, pk):
         form = FAQItemForm(instance=question)
     return render(request, 'faq/edit_question.html', {'form': form})
 
-@staff_required
+@admin_required
 def delete_question(request, pk):
     question = get_object_or_404(FAQItem, pk=pk)
     question.delete()

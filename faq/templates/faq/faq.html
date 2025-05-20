@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Часто задаваемые вопросы - ЖКХ Сервис{% endblock %}
 
@@ -6,7 +7,7 @@
 <section class="faq-section">
     <div class="section-header">
         <h1>Часто задаваемые вопросы</h1>
-        {% if is_staff %}
+        {% if is_admin %}
         <div class="actions">
             <a href="{% url 'faq:create_category' %}" class="btn btn-primary">+ Категория</a>
             <a href="{% url 'faq:create_question' %}" class="btn btn-primary">+ Вопрос</a>
@@ -18,7 +19,7 @@
     <div class="faq-category">
         <div class="category-header">
             <h2>{{ category.name }}</h2>
-            {% if is_staff %}
+            {% if is_admin %}
             <div class="category-actions">
                 <a href="{% url 'faq:update_category' category.pk %}" class="btn btn-icon">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -44,7 +45,7 @@
                     <div class="question">{{ question.question }}</div>
                     <div class="answer">{{ question.answer|linebreaks }}</div>
                 </div>
-                {% if is_staff %}
+                {% if is_admin %}
                 <div class="question-actions">
                     <a href="{% url 'faq:update_question' question.pk %}" class="btn btn-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">

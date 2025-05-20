@@ -75,7 +75,6 @@ class ReportsView(UserPassesTestMixin, View):
 
     def prepare_report_data(self, queryset):
         return [{
-            'ID': appeal.id,
             'Заголовок': appeal.title,
             'Статус': appeal.status.name if appeal.status else '-',
             'Приоритет': appeal.priority.name if appeal.priority else '-',
@@ -88,7 +87,6 @@ class ReportsView(UserPassesTestMixin, View):
     def export_to_excel(self, queryset):
         data = self.prepare_report_data(queryset)
         columns = {
-            'ID': 'ID',
             'Заголовок': 'Заголовок',
             'Статус': 'Статус',
             'Приоритет': 'Приоритет',

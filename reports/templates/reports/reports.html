@@ -8,24 +8,24 @@
         {% csrf_token %}
         <div class="filters">
             <div class="filter-group">
-    <label>Статус:</label>
-    <select name="status">
-        <option value="">Все</option>
-        {% for status in statuses %}
-            <option value="{{ status.id }}" {% if status.id|slugify == request.POST.status %}selected{% endif %}>{{ status.name }}</option>
-        {% endfor %}
-    </select>
-</div>
+                <label>Статус:</label>
+                <select name="status">
+                    <option value="">Все</option>
+                    {% for status in statuses %}
+                        <option value="{{ status.id }}" {% if status.id|slugify == request.POST.status %}selected{% endif %}>{{ status.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-<div class="filter-group">
-    <label>Приоритет:</label>
-    <select name="priority">
-        <option value="">Все</option>
-        {% for priority in priorities %}
-            <option value="{{ priority.id }}" {% if priority.id|slugify == request.POST.priority %}selected{% endif %}>{{ priority.name }}</option>
-        {% endfor %}
-    </select>
-</div>
+            <div class="filter-group">
+                <label>Приоритет:</label>
+                <select name="priority">
+                    <option value="">Все</option>
+                    {% for priority in priorities %}
+                        <option value="{{ priority.id }}" {% if priority.id|slugify == request.POST.priority %}selected{% endif %}>{{ priority.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
             <div class="filter-group">
                 <label>Тег:</label>
@@ -38,23 +38,22 @@
             </div>
 
             <div class="filter-group">
-             <label>Автор:</label>
-    <select name="author">
-        <option value="">Все</option>
-        {% for author in authors %}
-            <option value="{{ author.id }}" {% if author.id|slugify == request.POST.author %}selected{% endif %}>{{ author.username }}</option>
-        {% endfor %}
-    </select>
-</div>
-
+                <label>Автор:</label>
+                <select name="author">
+                    <option value="">Все</option>
+                    {% for author in authors %}
+                        <option value="{{ author.id }}" {% if author.id|slugify == request.POST.author %}selected{% endif %}>{{ author.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
             {% if request.user.role == 'admin' %}
                 <div class="filter-group">
                     <label>Сотрудник:</label>
                     <select name="employee">
-                    <option value="">Все</option>
+                        <option value="">Все</option>
                         {% for employee in employees %}
-                         <option value="{{ employee.id }}" {% if employee.id|slugify == request.POST.employee %}selected{% endif %}>{{ employee.username }}</option>
+                            <option value="{{ employee.id }}" {% if employee.id|slugify == request.POST.employee %}selected{% endif %}>{{ employee.username }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -83,7 +82,6 @@
         <table class="report-table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Заголовок</th>
                     <th>Статус</th>
                     <th>Приоритет</th>
@@ -96,7 +94,6 @@
             <tbody>
                 {% for item in report_data %}
                 <tr>
-                     <td>{{ item.ID }}</td>
                     <td>{{ item.Заголовок }}</td>
                     <td>{{ item.Статус }}</td>
                     <td>{{ item.Приоритет }}</td>
