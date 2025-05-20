@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
-from .forms import RegisterForm, LoginForm
+from django.contrib.auth.decorators import user_passes_test
+from .forms import RegisterForm, LoginForm, UserAdminForm
 from django.contrib.auth import logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import EditProfileForm
-from .models import Comment
+from .models import Comment, User
 from .forms import PublicCommentForm
 
 def home_view(request):
@@ -102,5 +103,34 @@ def edit_profile_view(request):
             return redirect('users:profile')
     else:
         form = EditProfileForm(instance=request.user)
-
     return render(request, 'users/edit_profile.html', {'form': form})
+
+def admin_required(view_func):
+    def check_admin(user):
+        return user.is_authenticated and user.role == 'admin'
+    return user_passes_test(check_admin)(view_func)
+
+@admin_required
+def admin_panel(request):
+    return render(request, 'users/admin_panel.html')
+
+@admin_required
+def user_admin(request):
+    users = User.objects.all().order_by('-date_joined')
+    return render(request, 'users/user_list.html', {'users': users})
+
+@admin_required
+def edit_user_role(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = UserAdminForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Роль пользователя успешно обновлена')
+            return redirect('users:user_admin')
+    else:
+        form = UserAdminForm(instance=user)
+    return render(request, 'users/edit_user.html', {
+        'form': form,
+        'target_user': user
+    })

@@ -96,3 +96,17 @@ class PublicCommentForm(forms.ModelForm):
                 'placeholder': 'Оставьте ваш комментарий...'
             })
         }
+
+
+class UserAdminForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['role', 'is_active']
+        widgets = {
+            'role': forms.Select(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }
+        labels = {
+            'role': 'Роль пользователя',
+            'is_active': 'Активный аккаунт'
+        }
