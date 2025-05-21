@@ -11,6 +11,30 @@
             <h3>Управление пользователями</h3>
             <p>Просмотр и редактирование учетных записей пользователей</p>
         </a>
+
+        <a href="{% url 'users:tag_admin' %}" class="admin-card">
+            <div class="admin-card-icon">🏷️</div>
+            <h3>Управление тегами</h3>
+            <p>Создание и редактирование тегов для обращений</p>
+        </a>
+
+        <a href="{% url 'users:status_admin' 'appealstatus' %}" class="admin-card">
+            <div class="admin-card-icon">📊</div>
+            <h3>Статусы обращений</h3>
+            <p>Настройка возможных статусов для обращений</p>
+        </a>
+
+        <a href="{% url 'users:status_admin' 'priority' %}" class="admin-card">
+            <div class="admin-card-icon">⚠️</div>
+            <h3>Приоритеты обращений</h3>
+            <p>Управление уровнями приоритета обращений</p>
+        </a>
+
+        <a href="{% url 'users:status_admin' 'employeestatus' %}" class="admin-card">
+            <div class="admin-card-icon">👔</div>
+            <h3>Статусы сотрудников</h3>
+            <p>Настройка статусов работы сотрудников</p>
+        </a>
     </div>
 </div>
 

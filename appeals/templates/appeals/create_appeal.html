@@ -32,6 +32,13 @@
     </div>
 
     <div class="form-group card-style">
+  <label for="{{ form.phone.id_for_label }}">📱 Телефон</label>
+  {{ form.phone }}
+  <small class="form-text text-muted">Номер будет автоматически заполнен из профиля</small>
+  {{ form.phone.errors }}
+</div>
+
+    <div class="form-group card-style">
       <label for="{{ form.address.id_for_label }}">🏠 Адрес проживания</label>
       {{ form.address }}
       {{ form.address.errors }}

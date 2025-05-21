@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
-
 class CustomUserManager(BaseUserManager):
     def create_superuser(self, username, email, password, phone, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -48,7 +47,6 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
 class User(AbstractUser):
     ROLES = (
         ('user', _('Обычный пользователь')),
@@ -69,7 +67,7 @@ class User(AbstractUser):
     )
     phone = models.CharField(
         _('Телефон'),
-        max_length=12,
+        max_length=20,
         validators=[phone_regex],
         unique=True
     )
@@ -86,7 +84,6 @@ class User(AbstractUser):
     class Meta:
         verbose_name = _('Пользователь')
         verbose_name_plural = _('Пользователи')
-
 
 class Comment(models.Model):
     STATUS_CHOICES = [

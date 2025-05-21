@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}{% if tag %}Редактирование тега{% else %}Создание тега{% endif %}{% endblock %}
+
+{% block content %}
+<div class="admin-container form-container">
+    <div class="form-header">
+        <h1>{% if tag %}Редактирование тега{% else %}Новый тег{% endif %}</h1>
+        <a href="{% url 'users:tag_admin' %}" class="btn btn-icon back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.03-.39-1.42 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/>
+            </svg>
+        </a>
+    </div>
+
+    <form method="post" class="entity-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name" class="form-label">Название тега</label>
+            <div class="input-wrapper">
+                <input type="text" class="form-input" id="name" name="name"
+                       value="{{ tag.name|default:'' }}" required
+                       placeholder="Введите название тега">
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary submit-btn">
+                {% if tag %}Сохранить изменения{% else %}Создать тег{% endif %}
+            </button>
+            <a href="{% url 'users:tag_admin' %}" class="btn btn-secondary">Отмена</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.back-btn {
+    color: #6b7280;
+    padding: 8px;
+    border-radius: 8px;
+    background: #f8f9fa;
+}
+
+.back-btn:hover {
+    background: #f1f1f1;
+}
+
+.entity-form {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #e0f5eb;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #0f3d2e;
+    font-weight: 500;
+}
+
+.input-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0f5eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #00a86b;
+    box-shadow: 0 0 0 3px rgba(0, 168, 107, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0f5eb;
+    justify-content: center;
+}
+
+.submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #6b7280;
+    border: 1px solid #e0e6ed;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-secondary:hover {
+    background: #f1f1f1;
+}
+</style>
+{% endblock %}

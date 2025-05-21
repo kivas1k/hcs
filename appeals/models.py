@@ -2,6 +2,7 @@ from django.db import models
 from users.models import User
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
+from django.core.validators import RegexValidator
 
 class Tag(models.Model):
     name = models.CharField('Название', max_length=50, unique=True)
@@ -84,6 +85,12 @@ class Appeal(models.Model):
     description = models.TextField('Описание')
     address = models.CharField('Адрес проживания', max_length=200, blank=True)
     full_name = models.CharField('ФИО', max_length=150, blank=True)
+    phone = models.CharField(
+        'Телефон',
+        max_length=20,
+        validators=[RegexValidator(regex=r'^\+7\d{10}$')],
+        blank=True
+    )
     status = models.ForeignKey(
         AppealStatus,
         on_delete=models.SET_NULL,

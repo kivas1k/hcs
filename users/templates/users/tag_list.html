@@ -1,42 +1,54 @@
 {% extends "base.html" %}
 
-{% block title %}Управление пользователями{% endblock %}
+{% block title %}Управление тегами{% endblock %}
 
 {% block content %}
 <div class="admin-container">
     <div class="header-row">
-        <h1>Управление пользователями</h1>
+        <h1>Управление тегами</h1>
+        <a href="{% url 'users:create_tag' %}" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Новый тег
+        </a>
     </div>
 
     <div class="card-list">
-        {% for user in users %}
+        {% for tag in tags %}
         <div class="entity-card">
             <div class="entity-info">
                 <div class="entity-title">
-                    <span class="username">{{ user.username }}</span>
-                    <span class="email">{{ user.email }}</span>
+                    <span class="tag-badge">{{ tag.name }}</span>
                 </div>
                 <div class="entity-meta">
-                    <span class="role {{ user.role }}">{{ user.get_role_display }}</span>
-                    <span class="status {% if user.is_active %}active{% else %}inactive{% endif %}">
-                        {% if user.is_active %}Активен{% else %}Заблокирован{% endif %}
-                    </span>
+                    <span class="meta-item">Создан: {{ tag.created_at|date:"d.m.Y" }}</span>
                 </div>
             </div>
             <div class="entity-actions">
-                <a href="{% url 'users:edit_user_role' user.pk %}" class="btn btn-icon edit-btn">
+                <a href="{% url 'users:edit_tag' tag.pk %}" class="btn btn-icon edit-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                     </svg>
                 </a>
+                <form method="post" action="{% url 'users:delete_tag' tag.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-icon delete-btn" onclick="return confirm('Удалить тег?')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                    </button>
+                </form>
             </div>
         </div>
         {% empty %}
         <div class="empty-state">
             <svg width="64" height="64" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#00a86b"/>
+                <path d="M17.5 13.2V10c0-3.1-2.5-5.6-5.6-5.6-3.1 0-5.6 2.5-5.6 5.6v3.2c0 .4.3.8.8.8h.8v2.4c0 .4.3.8.8.8s.8-.3.8-.8V14h5.6v2.4c0 .4.3.8.8.8s.8-.3.8-.8V14h.8c.4 0 .8-.3.8-.8zm-4.9-3.2v-3c0-1.2.9-2.1 2.1-2.1s2.1.9 2.1 2.1v3h-4.2z" fill="#00a86b"/>
+                <path d="M12 18.9c-1.2 0-2.1-.9-2.1-2.1h1.6c0 .3.3.6.6.6s.6-.3.6-.6h1.6c0 1.2-1 2.1-2.1 2.1z" fill="#00a86b"/>
             </svg>
-            <h3>Нет зарегистрированных пользователей</h3>
+            <h3>Нет созданных тегов</h3>
+            <p>Начните с создания нового тега</p>
         </div>
         {% endfor %}
     </div>
@@ -53,6 +65,9 @@
 }
 
 .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
 }
 
@@ -82,63 +97,23 @@
 }
 
 .entity-title {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-bottom: 0.5rem;
 }
 
-.username {
-    font-weight: 500;
+.tag-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #e0f5eb;
     color: #0f3d2e;
-}
-
-.email {
-    color: #6b7280;
-    font-size: 0.9rem;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
 .entity-meta {
     display: flex;
-    gap: 0.75rem;
-}
-
-.role {
-    padding: 4px 12px;
-    border-radius: 20px;
+    gap: 1rem;
+    color: #6b7280;
     font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.role.admin {
-    background: #00a86b20;
-    color: #00a86b;
-}
-
-.role.staff {
-    background: #2196F320;
-    color: #2196F3;
-}
-
-.role.user {
-    background: #e5e7eb;
-    color: #4b5563;
-}
-
-.status {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-}
-
-.status.active {
-    background: #4CAF5020;
-    color: #4CAF50;
-}
-
-.status.inactive {
-    background: #f4433620;
-    color: #f44336;
 }
 
 .entity-actions {
@@ -165,6 +140,15 @@
     background: rgba(0, 168, 107, 0.2);
 }
 
+.delete-btn {
+    color: #e63757;
+    background: rgba(230, 55, 87, 0.1);
+}
+
+.delete-btn:hover {
+    background: rgba(230, 55, 87, 0.2);
+}
+
 .empty-state {
     text-align: center;
     padding: 3rem;
@@ -176,6 +160,11 @@
 .empty-state h3 {
     margin: 1rem 0 0.5rem;
     color: #0f3d2e;
+}
+
+.empty-state p {
+    color: #6b7280;
+    margin: 0;
 }
 </style>
 {% endblock %}

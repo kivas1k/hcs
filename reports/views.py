@@ -81,8 +81,19 @@ class ReportsView(UserPassesTestMixin, View):
             'Автор': appeal.author.username,
             'Дата_создания': appeal.created_at.strftime('%d.%m.%Y %H:%M'),
             'Теги': ', '.join([tag.name for tag in appeal.tags.all()]),
-            'Исполнитель': appeal.taken_by.username if appeal.taken_by else '-',
+            'Исполнитель': self.get_executor_display(appeal),
         } for appeal in queryset]
+
+    def get_executor_display(self, appeal):
+        if appeal.employee_status and appeal.employee_status.code in ['in_progress', 'closed']:
+            if appeal.employee_status.code == 'closed':
+                if appeal.closed_by:
+                    return appeal.closed_by.username
+                elif appeal.taken_by:
+                    return appeal.taken_by.username
+            elif appeal.taken_by:
+                return appeal.taken_by.username
+        return '-'
 
     def export_to_excel(self, queryset):
         data = self.prepare_report_data(queryset)

@@ -97,7 +97,6 @@ class PublicCommentForm(forms.ModelForm):
             })
         }
 
-
 class UserAdminForm(forms.ModelForm):
     class Meta:
         model = User

@@ -24,7 +24,7 @@ def staff_required(view_func=None):
 @login_required
 def create_appeal(request):
     if request.method == 'POST':
-        form = AppealForm(request.POST)
+        form = AppealForm(request.POST, user=request.user)
         document_form = DocumentForm(request.POST, request.FILES)
 
         if form.is_valid():
@@ -41,14 +41,13 @@ def create_appeal(request):
             appeal.save()
             form.save_m2m()
 
-            # Обработка файлов
             files = request.FILES.getlist('files')
             for f in files:
                 AppealDocument.objects.create(appeal=appeal, file=f)
 
             return redirect('home')
     else:
-        form = AppealForm()
+        form = AppealForm(user=request.user)
         document_form = DocumentForm()
 
     return render(request, 'appeals/create_appeal.html', {
@@ -311,7 +310,6 @@ def staff_change_status(request, appeal_id, new_status):
             appeal.taken_at = None
 
         appeal.save()
-        messages.success(request, 'Статус успешно обновлен')
         return redirect('appeals:staff_appeals')
 
     return HttpResponseForbidden("Недопустимый метод запроса")

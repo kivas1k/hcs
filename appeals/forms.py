@@ -44,9 +44,19 @@ class AppealForm(forms.ModelForm):
         })
     )
 
+    phone = forms.CharField(
+        label='Телефон',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '+79999999999',
+            'pattern': r'\+7\d{10}'
+        }),
+        required=False
+    )
+
     class Meta:
         model = Appeal
-        fields = ['title', 'full_name', 'address', 'description', 'tags']
+        fields = ['title', 'full_name', 'phone', 'address', 'description', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={
@@ -56,7 +66,10 @@ class AppealForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        if user and user.phone:
+            self.fields['phone'].initial = user.phone
 
 class StaffAppealForm(forms.ModelForm):
     status = forms.ModelChoiceField(

@@ -1771,6 +1771,24 @@ body::after {
     transition: opacity 0.2s;
 }
 
+.btn-primary {
+    border: none !important;
+    outline: none !important;
+}
+
+/* Убрать обводку при фокусе */
+.btn-primary:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Переопределить стандартные стили браузера для button */
+button.btn-primary {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 
 
 

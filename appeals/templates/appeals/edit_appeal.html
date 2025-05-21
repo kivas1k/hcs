@@ -28,12 +28,17 @@
       {{ appeal_form.title.errors }}
     </div>
 
-    <!-- Добавлены поля full_name и address -->
     <div class="form-group card-style">
       <label for="{{ appeal_form.full_name.id_for_label }}">👤 ФИО</label>
       {{ appeal_form.full_name }}
       {{ appeal_form.full_name.errors }}
     </div>
+
+    <div class="form-group card-style">
+  <label for="{{ appeal_form.phone.id_for_label }}">📱 Телефон</label>
+  {{ appeal_form.phone }}
+  {{ appeal_form.phone.errors }}
+</div>
 
     <div class="form-group card-style">
       <label for="{{ appeal_form.address.id_for_label }}">🏠 Адрес проживания</label>
