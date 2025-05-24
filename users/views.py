@@ -137,12 +137,10 @@ def edit_user_role(request, pk):
         'target_user': user
     })
 
-
 @admin_required
 def tag_admin(request):
     tags = Tag.objects.all().order_by('name')
     return render(request, 'users/tag_list.html', {'tags': tags})
-
 
 @admin_required
 def create_tag(request):
@@ -154,7 +152,6 @@ def create_tag(request):
             return redirect('users:tag_admin')
     return render(request, 'users/tag_form.html')
 
-
 @admin_required
 def edit_tag(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
@@ -165,7 +162,6 @@ def edit_tag(request, pk):
         return redirect('users:tag_admin')
     return render(request, 'users/tag_form.html', {'tag': tag})
 
-
 @require_POST
 @admin_required
 def delete_tag(request, pk):
@@ -174,8 +170,6 @@ def delete_tag(request, pk):
     messages.success(request, 'Тег удален')
     return redirect('users:tag_admin')
 
-
-# Общие функции для управления статусами и приоритетами
 @admin_required
 def status_admin(request, model_type):
     model_map = {
@@ -190,7 +184,6 @@ def status_admin(request, model_type):
         'model_name': verbose_name,
         'model_type': model_type
     })
-
 
 @admin_required
 def create_status(request, model_type):
@@ -214,7 +207,6 @@ def create_status(request, model_type):
         'verbose_name': verbose_name
     })
 
-
 @admin_required
 def edit_status(request, model_type, pk):
     model_map = {
@@ -236,7 +228,6 @@ def edit_status(request, model_type, pk):
         'object': obj,
         'model_type': model_type
     })
-
 
 @require_POST
 @admin_required

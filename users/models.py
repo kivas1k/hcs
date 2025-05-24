@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator
 from django.utils.translation import gettext_lazy as _
+
 
 class CustomUserManager(BaseUserManager):
     def create_superuser(self, username, email, password, phone, **extra_fields):
@@ -47,6 +48,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 class User(AbstractUser):
     ROLES = (
         ('user', _('Обычный пользователь')),
@@ -67,14 +69,57 @@ class User(AbstractUser):
     )
     phone = models.CharField(
         _('Телефон'),
-        max_length=20,
+        max_length=12,
         validators=[phone_regex],
         unique=True
     )
 
-    email = models.EmailField(_('Email'), unique=True)
-    first_name = models.CharField(_('Имя'), max_length=150, blank=True)
-    last_name = models.CharField(_('Фамилия'), max_length=150, blank=True)
+    email = models.EmailField(
+        _('Email'),
+        unique=True,
+        max_length=254,
+        validators=[
+            MaxLengthValidator(254, message="Максимальная длина email - 254 символа")
+        ]
+    )
+
+    first_name = models.CharField(
+        _('Имя'),
+        max_length=150,
+        blank=True,
+        validators=[
+            RegexValidator(
+                regex=r'^[а-яА-ЯёЁa-zA-Z\s\-]+$',
+                message="Имя может содержать только буквы и дефисы"
+            )
+        ]
+    )
+
+    last_name = models.CharField(
+        _('Фамилия'),
+        max_length=150,
+        blank=True,
+        validators=[
+            RegexValidator(
+                regex=r'^[а-яА-ЯёЁa-zA-Z\s\-]+$',
+                message="Фамилия может содержать только буквы и дефисы"
+            )
+        ]
+    )
+
+    username = models.CharField(
+        _('Логин'),
+        max_length=30,
+        unique=True,
+        validators=[
+            MinLengthValidator(4, message="Логин должен содержать минимум 4 символа"),
+            MaxLengthValidator(30, message="Максимальная длина логина - 30 символов"),
+            RegexValidator(
+                regex=r'^[\w.@+-]+\Z',
+                message="Логин может содержать только буквы, цифры и символы @/./+/-/_"
+            )
+        ]
+    )
 
     objects = CustomUserManager()
 
@@ -85,6 +130,7 @@ class User(AbstractUser):
         verbose_name = _('Пользователь')
         verbose_name_plural = _('Пользователи')
 
+
 class Comment(models.Model):
     STATUS_CHOICES = [
         ('pending', 'На модерации'),
@@ -92,7 +138,13 @@ class Comment(models.Model):
         ('rejected', 'Отклонено'),
     ]
 
-    text = models.TextField('Текст комментария')
+    text = models.TextField(
+        'Текст комментария',
+        validators=[
+            MinLengthValidator(10, message="Комментарий должен содержать минимум 10 символов"),
+            MaxLengthValidator(1000, message="Максимальная длина комментария - 1000 символов")
+        ]
+    )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=20,

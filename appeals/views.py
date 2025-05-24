@@ -118,7 +118,6 @@ def appeal_detail(request, appeal_id):
                 if feedback_form.is_valid():
                     feedback = feedback_form.save(commit=False)
                     feedback.save()
-                    messages.success(request, 'Спасибо за вашу оценку!')
                     return redirect('appeals:appeal_detail', appeal_id=appeal_id)
 
     if request.user.is_authenticated and (request.user == appeal.author or request.user.is_staff):
@@ -146,7 +145,6 @@ def delete_comment(request, comment_id):
     if request.method == 'POST':
         appeal_id = comment.appeal.id
         comment.delete()
-        messages.success(request, 'Комментарий успешно удален')
         return redirect('appeals:appeal_detail', appeal_id=appeal_id)
 
     return HttpResponseForbidden("Недопустимый метод запроса")
@@ -164,7 +162,6 @@ def edit_comment(request, comment_id):
             edited_comment = form.save(commit=False)
             edited_comment.updated_at = timezone.now()
             edited_comment.save()
-            messages.success(request, 'Комментарий успешно обновлен')
             return redirect('appeals:appeal_detail', appeal_id=comment.appeal.id)
 
     return HttpResponseForbidden("Недопустимый метод запроса")
@@ -184,7 +181,6 @@ def edit_appeal(request, appeal_id):
             for f in files:
                 AppealDocument.objects.create(appeal=appeal, file=f)
 
-            messages.success(request, 'Обращение успешно обновлено')
             return redirect('appeals:appeal_detail', appeal_id=appeal.id)
     else:
         appeal_form = AppealForm(instance=appeal)
@@ -204,7 +200,6 @@ def delete_appeal(request, appeal_id):
 
     if request.method == 'POST':
         appeal.delete()
-        messages.success(request, 'Обращение успешно удалено')
         return redirect('appeals:my_appeals')
 
     return redirect('appeals:appeal_detail', appeal_id=appeal.id)
@@ -277,7 +272,6 @@ def staff_edit_appeal(request, appeal_id):
         form = StaffAppealForm(request.POST, instance=appeal)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Изменения сохранены')
             return redirect('appeals:staff_appeals')
     else:
         form = StaffAppealForm(instance=appeal)

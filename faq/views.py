@@ -18,24 +18,26 @@ def faq_view(request):
 @admin_required
 def create_category(request):
     if request.method == 'POST':
-        form = FAQCategoryForm(request.POST)
+        form = FAQCategoryForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
+            category = form.save(commit=False)
+            category.author = request.user
+            category.save()
             return redirect('faq:faq')
     else:
-        form = FAQCategoryForm()
+        form = FAQCategoryForm(user=request.user)
     return render(request, 'faq/edit_category.html', {'form': form})
 
 @admin_required
 def update_category(request, pk):
     category = get_object_or_404(FAQCategory, pk=pk)
     if request.method == 'POST':
-        form = FAQCategoryForm(request.POST, instance=category)
+        form = FAQCategoryForm(request.POST, instance=category, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('faq:faq')
     else:
-        form = FAQCategoryForm(instance=category)
+        form = FAQCategoryForm(instance=category, user=request.user)
     return render(request, 'faq/edit_category.html', {'form': form})
 
 @admin_required
@@ -47,24 +49,26 @@ def delete_category(request, pk):
 @admin_required
 def create_question(request):
     if request.method == 'POST':
-        form = FAQItemForm(request.POST)
+        form = FAQItemForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
+            question = form.save(commit=False)
+            question.author = request.user
+            question.save()
             return redirect('faq:faq')
     else:
-        form = FAQItemForm()
+        form = FAQItemForm(user=request.user)
     return render(request, 'faq/edit_question.html', {'form': form})
 
 @admin_required
 def update_question(request, pk):
     question = get_object_or_404(FAQItem, pk=pk)
     if request.method == 'POST':
-        form = FAQItemForm(request.POST, instance=question)
+        form = FAQItemForm(request.POST, instance=question, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('faq:faq')
     else:
-        form = FAQItemForm(instance=question)
+        form = FAQItemForm(instance=question, user=request.user)
     return render(request, 'faq/edit_question.html', {'form': form})
 
 @admin_required
