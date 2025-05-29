@@ -22,7 +22,6 @@ def home_view(request):
             comment = get_object_or_404(Comment, id=request.POST.get('comment_id'))
             if comment.author == request.user or request.user.is_staff:
                 comment.delete()
-                messages.success(request, 'Комментарий успешно удален')
             return redirect('home')
 
         elif form_type == 'edit_comment':
@@ -32,7 +31,6 @@ def home_view(request):
                 comment.status = 'pending'
                 comment.is_edited = True
                 comment.save()
-                messages.success(request, 'Изменения отправлены на модерацию')
             return redirect('home')
 
         elif form_type == 'new_comment':
@@ -41,17 +39,15 @@ def home_view(request):
                 comment = form.save(commit=False)
                 comment.author = request.user
                 comment.save()
-                messages.success(request, 'Комментарий отправлен на модерацию!')
             return redirect('home')
 
         elif 'action' in request.POST and request.user.is_staff:
             comment = get_object_or_404(Comment, id=request.POST.get('comment_id'))
             if request.POST.get('action') == 'approve':
                 comment.status = 'approved'
-                messages.success(request, 'Комментарий одобрен')
+
             elif request.POST.get('action') == 'reject':
                 comment.status = 'rejected'
-                messages.success(request, 'Комментарий отклонен')
             comment.save()
             return redirect('home')
 
@@ -128,7 +124,6 @@ def edit_user_role(request, pk):
         form = UserAdminForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Роль пользователя успешно обновлена')
             return redirect('users:user_admin')
     else:
         form = UserAdminForm(instance=user)
@@ -148,7 +143,6 @@ def create_tag(request):
         name = request.POST.get('name')
         if name:
             Tag.objects.create(name=name)
-            messages.success(request, 'Тег успешно создан')
             return redirect('users:tag_admin')
     return render(request, 'users/tag_form.html')
 
@@ -158,7 +152,6 @@ def edit_tag(request, pk):
     if request.method == 'POST':
         tag.name = request.POST.get('name')
         tag.save()
-        messages.success(request, 'Тег обновлен')
         return redirect('users:tag_admin')
     return render(request, 'users/tag_form.html', {'tag': tag})
 
@@ -167,7 +160,6 @@ def edit_tag(request, pk):
 def delete_tag(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
     tag.delete()
-    messages.success(request, 'Тег удален')
     return redirect('users:tag_admin')
 
 @admin_required
@@ -199,7 +191,6 @@ def create_status(request, model_type):
         code = request.POST.get('code')
         if name and code:
             model_class.objects.create(name=name, code=code)
-            messages.success(request, f'{verbose_name.capitalize()} создан')
             return redirect('users:status_admin', model_type=model_type)
 
     return render(request, 'users/status_form.html', {
@@ -221,7 +212,6 @@ def edit_status(request, model_type, pk):
         obj.name = request.POST.get('name')
         obj.code = request.POST.get('code')
         obj.save()
-        messages.success(request, 'Изменения сохранены')
         return redirect('users:status_admin', model_type=model_type)
 
     return render(request, 'users/status_form.html', {
@@ -240,5 +230,4 @@ def delete_status(request, model_type, pk):
     model_class = model_map[model_type]
     obj = get_object_or_404(model_class, pk=pk)
     obj.delete()
-    messages.success(request, 'Удалено успешно')
     return redirect('users:status_admin', model_type=model_type)
