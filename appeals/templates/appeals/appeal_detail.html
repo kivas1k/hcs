@@ -225,17 +225,23 @@
     {% endif %}
 
     <div class="form-actions">
-      {% if appeal.author == request.user and appeal.status != 'completed' %}
-        <a href="{% url 'appeals:edit_appeal' appeal.id %}" class="btn btn-primary">
-          Редактировать
-        </a>
-        <form method="post" action="{% url 'appeals:delete_appeal' appeal.id %}" class="delete-form">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger"
-                  onclick="return confirm('Вы уверены что хотите удалить обращение?')">
-            Удалить
-          </button>
-        </form>
+      {% if appeal.author == request.user and appeal.status.code != 'completed' or request.user.is_staff %}
+        {% if appeal.status.code != 'completed' or request.user.is_staff %}
+          <a href="{% if request.user.is_staff %}{% url 'appeals:staff_edit_appeal' appeal.id %}{% else %}{% url 'appeals:edit_appeal' appeal.id %}{% endif %}"
+             class="btn btn-primary">
+            Редактировать
+          </a>
+        {% endif %}
+
+        {% if appeal.author == request.user and appeal.status.code != 'completed' %}
+          <form method="post" action="{% url 'appeals:delete_appeal' appeal.id %}" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Вы уверены что хотите удалить обращение?')">
+              Удалить
+            </button>
+          </form>
+        {% endif %}
       {% endif %}
     </div>
   </div>

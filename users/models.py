@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator, MinLengthValidator, MaxLengthValidator
 from django.utils.translation import gettext_lazy as _
 
-
 class CustomUserManager(BaseUserManager):
     def create_superuser(self, username, email, password, phone, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -12,7 +11,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
 
         if not phone:
-            raise ValueError('Superuser must have a phone number')
+            raise ValueError('Суперпользователь должен иметь номер телефона')
         return self._create_user(username, email, password, phone, **extra_fields)
 
     def create_staffuser(self, username, email, password, phone, **extra_fields):
@@ -22,7 +21,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
 
         if not phone:
-            raise ValueError('Staff user must have a phone number')
+            raise ValueError('Сотрудник должен иметь номер телефона')
         return self._create_user(username, email, password, phone, **extra_fields)
 
     def create_user(self, username, email, password, phone, **extra_fields):
@@ -33,9 +32,9 @@ class CustomUserManager(BaseUserManager):
 
     def _create_user(self, username, email, password, phone, **extra_fields):
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError('Пользователи должны иметь email адрес')
         if not phone:
-            raise ValueError('Users must have a phone number')
+            raise ValueError('Пользователи должны иметь номер телефона')
 
         email = self.normalize_email(email)
         user = self.model(

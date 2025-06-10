@@ -10,6 +10,7 @@ from io import BytesIO
 from .models import Appeal, AppealDocument, Comment, AppealStatus, EmployeeStatus
 from .forms import AppealForm, DocumentForm, StaffAppealForm, CommentForm, FeedbackForm
 
+
 def staff_required(view_func=None):
     def check_staff(user):
         return user.is_authenticated and user.role in ['staff', 'admin']
@@ -20,6 +21,7 @@ def staff_required(view_func=None):
         redirect_field_name=None
     )
     return decorator(view_func) if view_func else decorator
+
 
 @login_required
 def create_appeal(request):
@@ -55,6 +57,7 @@ def create_appeal(request):
         'document_form': document_form
     })
 
+
 @login_required
 def my_appeals(request):
     sort_mapping = {
@@ -85,6 +88,7 @@ def my_appeals(request):
         'current_filter': filter_type,
         'search_query': search_query
     })
+
 
 @login_required
 def appeal_detail(request, appeal_id):
@@ -135,6 +139,7 @@ def appeal_detail(request, appeal_id):
         'show_feedback_form': show_feedback_form
     })
 
+
 @login_required
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
@@ -148,6 +153,7 @@ def delete_comment(request, comment_id):
         return redirect('appeals:appeal_detail', appeal_id=appeal_id)
 
     return HttpResponseForbidden("Недопустимый метод запроса")
+
 
 @login_required
 def edit_comment(request, comment_id):
@@ -166,9 +172,14 @@ def edit_comment(request, comment_id):
 
     return HttpResponseForbidden("Недопустимый метод запроса")
 
+
 @login_required
 def edit_appeal(request, appeal_id):
     appeal = get_object_or_404(Appeal, id=appeal_id, author=request.user)
+
+    if appeal.status.code == 'completed' and not request.user.is_staff:
+        messages.error(request, "Невозможно редактировать завершенное обращение")
+        return redirect('appeals:appeal_detail', appeal_id=appeal_id)
 
     if request.method == 'POST':
         appeal_form = AppealForm(request.POST, instance=appeal)
@@ -194,9 +205,15 @@ def edit_appeal(request, appeal_id):
         'appeal': appeal
     })
 
+
 @login_required
 def delete_appeal(request, appeal_id):
     appeal = get_object_or_404(Appeal, id=appeal_id, author=request.user)
+
+
+    if appeal.status.code == 'completed' and not request.user.is_staff:
+        messages.error(request, "Невозможно удалить завершенное обращение")
+        return redirect('appeals:appeal_detail', appeal_id=appeal_id)
 
     if request.method == 'POST':
         appeal.delete()
@@ -204,11 +221,18 @@ def delete_appeal(request, appeal_id):
 
     return redirect('appeals:appeal_detail', appeal_id=appeal.id)
 
+
 @login_required
 def delete_document(request, document_id):
     document = get_object_or_404(AppealDocument, id=document_id, appeal__author=request.user)
+
+    if document.appeal.status.code == 'completed' and not request.user.is_staff:
+        messages.error(request, "Невозможно удалить документ завершенного обращения")
+        return redirect('appeals:edit_appeal', appeal_id=document.appeal.id)
+
     document.delete()
     return redirect('appeals:edit_appeal', appeal_id=document.appeal.id)
+
 
 @login_required
 def download_all_documents(request, appeal_id):
@@ -233,6 +257,7 @@ def download_all_documents(request, appeal_id):
     response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="appeal_{appeal_id}_documents.zip"'
     return response
+
 
 @staff_required
 def staff_appeals(request):
@@ -265,9 +290,11 @@ def staff_appeals(request):
         'search_query': search_query
     })
 
+
 @staff_required
 def staff_edit_appeal(request, appeal_id):
     appeal = get_object_or_404(Appeal, id=appeal_id)
+
     if request.method == 'POST':
         form = StaffAppealForm(request.POST, instance=appeal)
         if form.is_valid():
@@ -280,6 +307,7 @@ def staff_edit_appeal(request, appeal_id):
         'form': form,
         'appeal': appeal
     })
+
 
 @staff_required
 def staff_change_status(request, appeal_id, new_status):

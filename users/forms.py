@@ -3,7 +3,6 @@ from .models import Comment, User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.validators import RegexValidator
 
-
 class PhoneInput(forms.TextInput):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('attrs', {})
@@ -14,7 +13,6 @@ class PhoneInput(forms.TextInput):
             'class': 'form-control'
         })
         super().__init__(*args, **kwargs)
-
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(
@@ -74,7 +72,6 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'phone', 'password1', 'password2']
 
-
 class LoginForm(forms.Form):
     username = forms.CharField(
         label='Логин',
@@ -91,7 +88,6 @@ class LoginForm(forms.Form):
             'class': 'form-control'
         })
     )
-
 
 class EditProfileForm(UserChangeForm):
     first_name = forms.CharField(
@@ -136,7 +132,6 @@ class EditProfileForm(UserChangeForm):
             'phone': PhoneInput(),
         }
 
-
 class PublicCommentForm(forms.ModelForm):
     text = forms.CharField(
         label='Комментарий',
@@ -160,7 +155,6 @@ class PublicCommentForm(forms.ModelForm):
                 'placeholder': 'Оставьте ваш комментарий...'
             })
         }
-
 
 class UserAdminForm(forms.ModelForm):
     class Meta:

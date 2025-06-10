@@ -9,7 +9,6 @@ import pandas as pd
 from io import BytesIO
 from datetime import datetime
 
-
 class ReportsView(UserPassesTestMixin, View):
     def test_func(self):
         return self.request.user.is_authenticated and self.request.user.role in ['staff', 'admin']
@@ -38,6 +37,7 @@ class ReportsView(UserPassesTestMixin, View):
             'employees': User.objects.filter(role__in=['staff', 'admin']),
             'tags': Tag.objects.all(),
             'authors': User.objects.filter(appeals__isnull=False).distinct(),
+            'is_admin': self.request.user.role == 'admin'  # Добавляем флаг админа
         }
 
     def get_filter_params(self, request):
@@ -74,15 +74,21 @@ class ReportsView(UserPassesTestMixin, View):
         return queryset
 
     def prepare_report_data(self, queryset):
-        return [{
-            'Заголовок': appeal.title,
-            'Статус': appeal.status.name if appeal.status else '-',
-            'Приоритет': appeal.priority.name if appeal.priority else '-',
-            'Автор': appeal.author.username,
-            'Дата_создания': appeal.created_at.strftime('%d.%m.%Y %H:%M'),
-            'Теги': ', '.join([tag.name for tag in appeal.tags.all()]),
-            'Исполнитель': self.get_executor_display(appeal),
-        } for appeal in queryset]
+        data = []
+        for appeal in queryset:
+            item = {
+                'Заголовок': appeal.title,
+                'Статус': appeal.status.name if appeal.status else '-',
+                'Приоритет': appeal.priority.name if appeal.priority else '-',
+                'Автор': appeal.author.username,
+                'Дата_создания': appeal.created_at.strftime('%d.%m.%Y %H:%M'),
+                'Теги': ', '.join([tag.name for tag in appeal.tags.all()]),
+            }
+            if self.request.user.role == 'admin':
+                item['Исполнитель'] = self.get_executor_display(appeal)
+
+            data.append(item)
+        return data
 
     def get_executor_display(self, appeal):
         if appeal.employee_status and appeal.employee_status.code in ['in_progress', 'closed']:
@@ -104,11 +110,11 @@ class ReportsView(UserPassesTestMixin, View):
             'Автор': 'Автор',
             'Дата_создания': 'Дата создания',
             'Теги': 'Теги',
-            'Исполнитель': 'Исполнитель'
         }
 
+        if self.request.user.role == 'admin':
+            columns['Исполнитель'] = 'Исполнитель'
         df = pd.DataFrame(data).rename(columns=columns)
-
         output = BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             df.to_excel(writer, index=False, sheet_name='Отчет')
@@ -120,7 +126,6 @@ class ReportsView(UserPassesTestMixin, View):
                     len(col)
                 ) + 1
                 worksheet.set_column(idx, idx, min(max_len, 30))
-
         output.seek(0)
         response = HttpResponse(
             output.getvalue(),

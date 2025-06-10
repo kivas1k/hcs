@@ -79,15 +79,18 @@
             <a href="{{ document.file.url }}" target="_blank" class="document-link">
               {{ document.file.name|slice:"15:"|truncatechars:30 }}
             </a>
-            <a href="{% url 'appeals:delete_document' document.id %}"
-               class="document-delete"
-               onclick="return confirm('Удалить этот документ?')">✖</a>
+            {% if appeal.status.code != 'completed' or request.user.is_staff %}
+              <a href="{% url 'appeals:delete_document' document.id %}"
+                 class="document-delete"
+                 onclick="return confirm('Удалить этот документ?')">✖</a>
+            {% endif %}
           </div>
         {% endfor %}
       </div>
     </div>
     {% endif %}
 
+    {% if appeal.status.code != 'completed' or request.user.is_staff %}
     <div class="form-group card-style file-upload">
       <label>📎 Добавить новые документы</label>
       <div class="upload-area">
@@ -99,6 +102,7 @@
         <input type="file" name="files" multiple class="file-input">
       </div>
     </div>
+    {% endif %}
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary submit-btn">
