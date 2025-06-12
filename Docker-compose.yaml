@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:17.2
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Fkbcf2014
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-tier
+
+  web:
+    image: hcs_appeals:latest
+    build: .
+    volumes:
+      - .:/hcs_site
+      - static_volume:/hcs_site/static
+      - media_volume:/hcs_site/media
+    ports:
+      - "8000:8000"
+    networks:
+      - app-tier
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Fkbcf2014
+      - DEBUG=1
+      - ALLOWED_HOSTS=localhost,127.0.0.1,web
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  app-tier:
+    driver: bridge

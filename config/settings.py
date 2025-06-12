@@ -4,8 +4,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-djchy2b@#q+4$a!vzg9!s(+85-je8+x(&(y+-cf69@hf@8@ykq'
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = os.getenv('DEBUG', '1') == '1'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,web').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -19,7 +19,6 @@ INSTALLED_APPS = [
     'faq.apps.FaqConfig',
     'reports.apps.ReportsConfig',
     'notifications.apps.NotificationsConfig',
-
 ]
 
 LOGGING = {
@@ -71,7 +70,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'Fkbcf2014',
-        'HOST': 'localhost',
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),
         'PORT': '5432',
     }
 }
